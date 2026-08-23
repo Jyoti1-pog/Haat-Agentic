@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="brushes cover">
+  <rect width="400" height="400" fill="#101410"/>
+  <rect x="18" y="18" width="364" height="364" fill="none" stroke="#8A9B7B" stroke-width="1" opacity="0.3"/>
+  <path d="M80 300 q-22 -70 0 -140 q22 70 0 140 Z" fill="none" stroke="#8A9B7B" stroke-width="1.6"/>
+    <line x1="80" y1="300" x2="80" y2="162" stroke="#8A9B7B" stroke-width="1" opacity="0.6"/>
+    <path d="M140 300 q-22 -70 0 -140 q22 70 0 140 Z" fill="none" stroke="#E0A458" stroke-width="1.6"/>
+    <line x1="140" y1="300" x2="140" y2="162" stroke="#8A9B7B" stroke-width="1" opacity="0.6"/>
+    <path d="M200 300 q-22 -70 0 -140 q22 70 0 140 Z" fill="none" stroke="#8A9B7B" stroke-width="1.6"/>
+    <line x1="200" y1="300" x2="200" y2="162" stroke="#8A9B7B" stroke-width="1" opacity="0.6"/>
+    <path d="M260 300 q-22 -70 0 -140 q22 70 0 140 Z" fill="none" stroke="#E0A458" stroke-width="1.6"/>
+    <line x1="260" y1="300" x2="260" y2="162" stroke="#8A9B7B" stroke-width="1" opacity="0.6"/>
+    <path d="M320 300 q-22 -70 0 -140 q22 70 0 140 Z" fill="none" stroke="#8A9B7B" stroke-width="1.6"/>
+    <line x1="320" y1="300" x2="320" y2="162" stroke="#8A9B7B" stroke-width="1" opacity="0.6"/>
+  <text x="200" y="368" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" letter-spacing="4" fill="#8A9B7B" opacity="0.75">BRUSHES</text>
+</svg>

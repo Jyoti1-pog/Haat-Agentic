@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" width="760" height="560">
+  <rect width="760" height="560" fill="#FBF8F2"/>
+  <text x="56" y="74" font-family="Georgia, serif" font-size="28" fill="#1A1510">Ragas at Dawn — Field Recordings</text>
+  <text x="56" y="102" font-family="ui-monospace, monospace" font-size="11" fill="#6B6355">Ninety minutes of Bhairav and Todi recorded on the Varanasi ghats between four and seven in the morning.</text>
+  <line x1="56" y1="124" x2="704" y2="124" stroke="#B8935A" stroke-width="1"/>
+  <g transform="translate(180 140)"><path d="M60 112 q28 -14 56 0 t56 0 t56 0 t56 0 t56 0" fill="none" stroke="#8A4B1E" stroke-width="1.0" opacity="0.35"/>
+    <path d="M60 138 q28 -17 56 0 t56 0 t56 0 t56 0 t56 0" fill="none" stroke="#B8935A" stroke-width="1.6" opacity="0.44"/>
+    <path d="M60 164 q28 -20 56 0 t56 0 t56 0 t56 0 t56 0" fill="none" stroke="#8A4B1E" stroke-width="2.2" opacity="0.53"/>
+    <path d="M60 190 q28 -23 56 0 t56 0 t56 0 t56 0 t56 0" fill="none" stroke="#B8935A" stroke-width="1.0" opacity="0.62"/>
+    <path d="M60 216 q28 -26 56 0 t56 0 t56 0 t56 0 t56 0" fill="none" stroke="#8A4B1E" stroke-width="1.6" opacity="0.71"/>
+    <path d="M60 242 q28 -29 56 0 t56 0 t56 0 t56 0 t56 0" fill="none" stroke="#B8935A" stroke-width="2.2" opacity="0.80"/>
+    <path d="M60 268 q28 -32 56 0 t56 0 t56 0 t56 0 t56 0" fill="none" stroke="#8A4B1E" stroke-width="1.0" opacity="0.89"/></g>
+  <text x="56" y="534" font-family="ui-monospace, monospace" font-size="10" fill="#6B6355">Delivered by haat · licensed to the named buyer · Sync licence, one project</text>
+</svg>

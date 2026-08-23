@@ -1,0 +1,684 @@
+/* ============================================================================
+   BAHI-KHATA — the agent checkout ledger
+   ============================================================================
+
+   haat's storefront sells trust through warmth: cream ground, burnt orange,
+   photographs of the people who made the thing. That is the right register for
+   a human deciding whether to trust a stranger's craft.
+
+   An agent does not need warmth. It needs proof. So this surface is the other
+   half of the same object — the bahi-khata, the hand-ruled account ledger
+   Indian traders have kept for centuries, rendered as something that is
+   actually written in front of you rather than a table that appears.
+
+   Every animation here does one of two jobs: it *is* the information (a stamp
+   landing is a decision being made, ink rising is budget being spent), or it is
+   a sub-200ms acknowledgment of a click. Nothing loops except the single slow
+   crawl on a pending approval, which is the one state where "still waiting" is
+   the information. Under prefers-reduced-motion every one of them collapses to
+   an instant state change and the ledger still reads perfectly as a static
+   document — no meaning is carried by motion alone.
+
+   Four faces, each doing exactly one job, no overlap: Bodoni Moda for display
+   (rationed to the wordmark, the seal, and section headers), Jost for body and
+   UI at two weights only, IBM Plex Mono for anything that is a record rather
+   than prose, and Cormorant Garamond italic in exactly one place — the
+   "verified by haat" line on a receipt. The moment that last one appears
+   anywhere else it stops meaning "this is authenticated".
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..700&family=Jost:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+.ledger-root {
+  /* ── Colour ─────────────────────────────────────────────────────────── */
+  --ink:          #14100B;  /* page ground — near-black, warm undertone     */
+  --ink-raised:   #1D1811;  /* panels                                       */
+  --ink-sunken:   #0D0A07;  /* the ledger's own well                        */
+  --parchment:    #F5F1EA;  /* primary text; the bridge back to the shop    */
+  --brass:        #B8935A;  /* the agent's ink — every write and stamp      */
+  --brass-bright: #D9B57C;  /* only ever mid-motion, never at rest          */
+  --ember:        #C4623E;  /* blocked / gated / needs approval             */
+  --sage:         #8A9B7B;  /* delivered / approved / done                  */
+  --rule:         #3A332A;  /* hairlines and ledger rules                   */
+  --muted:        #8A8478;  /* timestamps, secondary                        */
+
+  --font-display: 'Bodoni Moda', Georgia, 'Times New Roman', serif;
+  --font-ledger:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-body:    'Jost', 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-sign:    'Cormorant Garamond', Georgia, serif;
+
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  color: var(--parchment);
+  font-family: var(--font-body);
+  font-weight: 300;
+  /* Opaque ground: the shell's cream atmosphere and ambient canvas sit at
+     z-index -1 behind this, and must not bleed through. */
+  background:
+    radial-gradient(70% 50% at 12% -8%, rgba(184, 147, 90, 0.10) 0%, rgba(184, 147, 90, 0) 70%),
+    radial-gradient(50% 40% at 100% 0%, rgba(196, 98, 62, 0.06) 0%, rgba(196, 98, 62, 0) 72%),
+    var(--ink);
+}
+
+/* The ruled paper the whole thing is written on. */
+.ledger-root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(184, 147, 90, 0.05) 0px,
+    rgba(184, 147, 90, 0.05) 1px,
+    transparent 1px,
+    transparent 34px
+  );
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 20%, transparent 78%);
+  opacity: 0.7;
+}
+
+.ledger-root > * { position: relative; z-index: 1; }
+
+/* ── Type ──────────────────────────────────────────────────────────────── */
+/* Luxury display type tightens as it grows; small caps open up. The two
+   extremes next to each other — never a default middle — is what makes the
+   system read as typeset rather than defaulted. */
+
+.lx-wordmark {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(28px, 3.4vw, 40px);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--parchment);
+}
+
+.lx-section {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.lx-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.lx-data {
+  font-family: var(--font-ledger);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.lx-sign {
+  font-family: var(--font-sign);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--brass);
+}
+
+.lx-body { font-size: 15px; line-height: 1.6; color: var(--parchment); }
+.lx-muted { color: var(--muted); }
+
+/* ══ 1. THE SEAL — signature entrance ══════════════════════════════════════
+   Plays once per session, at the exact moment the demo begins. Never on a
+   re-render, a tab refocus, or a state change: a judge should see it once.
+
+   0–300ms   the seal sits, small and dim
+   300–650ms it stamps — hard overshoot, one frame of brass-bright, then splits
+   650–1000  the two halves swing out on a Y-axis hinge, like a book opening
+   1000–1400 the interface underneath takes its first ink                    */
+
+/* Mounted on <body>, outside .ledger-root, so it cannot inherit the palette —
+   it carries its own. Without this the overlay resolves to a transparent
+   background and the page shows through instead of the seal. */
+.seal-stage {
+  --ink: #14100B;
+  --brass: #B8935A;
+  --brass-bright: #D9B57C;
+
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  animation: sealStageOut 300ms ease-out 1100ms both;
+}
+
+.seal-glyph {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  transform-origin: center;
+  animation: sealStamp 350ms cubic-bezier(0.34, 1.56, 0.64, 1) 300ms both;
+}
+
+@keyframes sealStamp {
+  0%   { opacity: 0.4; transform: scale(1);    filter: none; }
+  46%  { opacity: 1;   transform: scale(1.15); filter: brightness(1.6) saturate(1.3); }
+  100% { opacity: 1;   transform: scale(1);    filter: none; }
+}
+
+/* The seal then cracks: two halves of the same glyph, clipped down the
+   centreline, driven apart. They are what the panels hinge out of. */
+.seal-half {
+  position: absolute;
+  inset: 0;
+  animation: sealCrack 300ms cubic-bezier(0.4, 0, 0.9, 0.4) 650ms both;
+}
+.seal-half-l { clip-path: inset(0 50% 0 0); }
+.seal-half-r { clip-path: inset(0 0 0 50%); animation-name: sealCrackR; }
+
+@keyframes sealCrack {
+  from { transform: translateX(0);     opacity: 1; }
+  to   { transform: translateX(-46px); opacity: 0; }
+}
+@keyframes sealCrackR {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(46px); opacity: 0; }
+}
+
+/* The hairline of the crack itself — one frame of bright brass down the
+   centreline as the two halves part. */
+.seal-glyph::after {
+  content: '';
+  position: absolute;
+  top: 6%;
+  bottom: 6%;
+  left: 50%;
+  width: 1px;
+  background: var(--brass-bright);
+  transform: scaleY(0);
+  animation: sealFracture 220ms ease-out 620ms both;
+}
+
+@keyframes sealFracture {
+  0%   { transform: scaleY(0); opacity: 1; }
+  55%  { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0; }
+}
+
+@keyframes sealStageOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* The two halves of the cracked seal are the two panels. They swing outward
+   from the centreline, revealing the interface as they settle flat. */
+.hinge-left, .hinge-right {
+  transform-origin: center;
+  backface-visibility: hidden;
+}
+.hinge-left  { animation: hingeLeft  420ms cubic-bezier(0.22, 0.8, 0.3, 1) 620ms both; }
+.hinge-right { animation: hingeRight 420ms cubic-bezier(0.22, 0.8, 0.3, 1) 620ms both; }
+
+@keyframes hingeLeft {
+  from { opacity: 0; transform: perspective(1400px) rotateY(24deg) translateX(-3%); }
+  to   { opacity: 1; transform: perspective(1400px) rotateY(0deg) translateX(0); }
+}
+@keyframes hingeRight {
+  from { opacity: 0; transform: perspective(1400px) rotateY(-24deg) translateX(3%); }
+  to   { opacity: 1; transform: perspective(1400px) rotateY(0deg) translateX(0); }
+}
+
+/* ══ 2. WRITE-ON — ink filling a line ══════════════════════════════════════
+   A left-to-right clip wipe rather than a fade or a slide, so a new row reads
+   as being written rather than appearing. The timestamp goes first — it is
+   already recorded — then the prose, so the eye tracks the way it would
+   reading a hand-kept book. */
+
+.write-on {
+  animation: writeOn 260ms ease-out both;
+}
+.write-on-delayed {
+  animation: writeOn 260ms ease-out 40ms both;
+}
+
+@keyframes writeOn {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+/* ══ 3. THE STAMP — a decision hitting paper ═══════════════════════════════
+   One impression per decision, permanent after. The brief flash on landing is
+   the ink still being wet; it is the only place brass-bright ever appears, and
+   it never sits still on screen. */
+
+.stamp {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 1px solid currentColor;
+  box-shadow: inset 0 0 0 2.5px var(--ink-raised), inset 0 0 0 3.5px currentColor;
+  animation: stampLand 180ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes stampLand {
+  from { opacity: 0; transform: scale(1.4) rotate(8deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.stamp::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--brass-bright);
+  animation: wetInk 100ms ease-out 180ms both;
+  pointer-events: none;
+}
+
+/* Inside the ledger the stamp waits for the line to be written before it
+   lands: timestamp, then description, then the decision stamped onto them.
+   Without the delay the badge hits an empty row and reads as a stamp
+   floating over nothing. Elsewhere — the settled approval card — there is no
+   line to wait for, so it lands at once. */
+.entry .stamp          { animation-delay: 300ms; }
+.entry .stamp::after   { animation-delay: 480ms; }
+
+@keyframes wetInk {
+  from { opacity: 0.9; }
+  to   { opacity: 0; }
+}
+
+.stamp-ok      { color: var(--sage); }
+.stamp-blocked { color: var(--ember); }
+.stamp-gated   { color: var(--ember); }
+.stamp-note    { color: var(--brass); }
+
+/* ══ 4. THE WAIT — a pending approval ══════════════════════════════════════
+   The dashes crawl, barely perceptibly, so "still open" is legible without a
+   word of copy. It stops the instant a decision is made — the difference
+   between a crawl and a solid border carries the state change. */
+
+.awaiting {
+  position: relative;
+  border: none;
+  background-image:
+    repeating-linear-gradient(90deg,  var(--ember) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(90deg,  var(--ember) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(180deg, var(--ember) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(180deg, var(--ember) 0 8px, transparent 8px 16px);
+  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  background-repeat: no-repeat;
+  animation: dashCrawl 6s linear infinite;
+}
+
+@keyframes dashCrawl {
+  to { background-position: 160px 0, -160px 100%, 0 -160px, 100% 160px; }
+}
+
+/* Decided: the crawl stops and the dashes resolve to a solid rule. The
+   difference between a crawl and a solid border is the state change — no extra
+   copy needed to say "this is settled now". */
+.awaiting.settled {
+  animation: none;
+  background-image:
+    linear-gradient(90deg,  var(--rule), var(--rule)),
+    linear-gradient(90deg,  var(--rule), var(--rule)),
+    linear-gradient(180deg, var(--rule), var(--rule)),
+    linear-gradient(180deg, var(--rule), var(--rule));
+  transition: background-image 160ms ease;
+}
+
+/* ══ 5. RISING INK — the session spend meter ═══════════════════════════════
+   Not a colour transition: an actual width animation with a bright leading
+   edge that trails behind for a moment before fading. A meniscus, not a
+   progress bar. */
+
+.meter-well {
+  position: relative;
+  height: 3px;
+  background: var(--rule);
+  overflow: hidden;
+}
+
+.meter-fill {
+  position: relative;
+  height: 100%;
+  background: var(--brass);
+  transition: width 320ms ease-out, background-color 200ms ease;
+}
+
+.meter-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: var(--brass-bright);
+  box-shadow: 0 0 6px var(--brass-bright);
+  animation: meniscus 470ms ease-out both;
+}
+
+@keyframes meniscus {
+  0%, 68% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
+.meter-fill.at-limit { background: var(--ember); }
+
+/* ══ 6. MICRO — press, hover, focus ════════════════════════════════════════ */
+
+.lx-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 11px 20px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--brass);
+  border: 1px solid var(--brass);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
+}
+
+.lx-btn:hover:not(:disabled)  { background: var(--brass-bright); border-color: var(--brass-bright); }
+.lx-btn:disabled              { opacity: 0.4; cursor: not-allowed; }
+
+.lx-btn-ghost {
+  color: var(--parchment);
+  background: transparent;
+  border-color: var(--rule);
+  font-weight: 400;
+}
+.lx-btn-ghost:hover:not(:disabled) {
+  background: transparent;
+  border-color: var(--brass);
+  color: var(--brass);
+}
+
+/* An ink blot spreading under the thumb, rather than a generic darken. */
+.lx-btn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(20, 16, 11, 0.22);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+.lx-btn:active::after { animation: inkBlot 300ms ease-out; }
+
+@keyframes inkBlot {
+  from { transform: translate(-50%, -50%) scale(0);  opacity: 0.9; }
+  to   { transform: translate(-50%, -50%) scale(28); opacity: 0; }
+}
+
+.ledger-root :focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+  border-radius: 0;
+}
+
+/* ══ 7. RECEIPT — the same hinge, small and fast ═══════════════════════════
+   A visual echo of the entrance, so the page reads as one physical object
+   rather than a UI with an intro bolted on. */
+
+.receipt {
+  position: relative;
+  transform-origin: top center;
+  animation: unfold 200ms cubic-bezier(0.22, 0.8, 0.3, 1) both;
+  background: var(--parchment);
+  color: #16120E;
+  padding: 16px 18px 20px;
+}
+
+@keyframes unfold {
+  from { opacity: 0; transform: perspective(600px) rotateX(-32deg); }
+  to   { opacity: 1; transform: perspective(600px) rotateX(0); }
+}
+
+/* Perforated stub edge. */
+.receipt::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 6px;
+  background:
+    radial-gradient(circle at 5px 0, transparent 0 4px, var(--parchment) 4px) repeat-x;
+  background-size: 10px 6px;
+}
+
+/* ══ Structure ═════════════════════════════════════════════════════════════ */
+
+.ledger-shell {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 24px clamp(16px, 3vw, 40px) 64px;
+}
+
+.ledger-topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sage);
+  box-shadow: 0 0 8px var(--sage);
+}
+.status-dot.busy { background: var(--brass-bright); box-shadow: 0 0 8px var(--brass-bright); }
+.status-dot.idle { background: var(--muted); box-shadow: none; }
+
+.ledger-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(20px, 3vw, 44px);
+  margin-top: 28px;
+  align-items: start;
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ── Counter (left) ────────────────────────────────────────────────────── */
+
+/* Scoped to .ledger-root so it outranks the global `input[type="text"]` rule in
+   tokens.css, which would otherwise paint this a light shell colour. */
+.ledger-root .prompt-line {
+  width: 100%;
+  padding: 12px 2px;
+  color: var(--parchment);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--rule);
+  box-shadow: none;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  outline: none;
+  transition: border-color 150ms ease;
+}
+.ledger-root .prompt-line::placeholder { color: var(--muted); }
+.ledger-root .prompt-line:focus { border-bottom-color: var(--brass); box-shadow: none; }
+
+.chip {
+  padding: 5px 10px;
+  font-size: 11px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+.chip:hover { border-color: var(--brass); color: var(--brass); }
+
+/* Flat surfaces stay flat: the border shifts to brass on hover, with no lift
+   and no shadow. The 12px radius is the one soft edge in the system. */
+.sku {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 12px;
+  background: var(--ink-raised);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  transition: border-color 150ms ease;
+}
+.sku:hover { border-color: var(--brass); }
+.sku img { width: 46px; height: 46px; object-fit: cover; border-radius: 6px; }
+.sku.is-off { opacity: 0.5; }
+
+.tag {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+}
+.tag-ready    { color: var(--brass); }
+.tag-off      { color: var(--muted); }
+.tag-unverified { color: var(--ember); }
+
+/* ── Ledger (right) ───────────────────────────────────────────────────── */
+
+.ledger-well {
+  background: var(--ink-sunken);
+  border: 1px solid var(--rule);
+  padding: 0 18px 18px;
+}
+
+.ledger-well .panel-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-top: 16px;
+  background: var(--ink-sunken);
+}
+
+.ledger-feed {
+  max-height: min(62vh, 620px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+}
+.ledger-feed::-webkit-scrollbar { width: 4px; }
+.ledger-feed::-webkit-scrollbar-thumb { background: var(--rule); }
+
+/* Density is a feature of a ledger, not a bug: rows are single-line by
+   design, so line-height here is 1. */
+.entry {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule);
+  line-height: 1;
+}
+
+.entry-reason {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--parchment);
+  word-break: break-word;
+}
+.entry.is-blocked .entry-reason { color: #E8B9A6; }
+.entry.is-human   .entry-reason { color: var(--brass); }
+
+.entry-time {
+  font-family: var(--font-ledger);
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.approval-card {
+  padding: 14px 16px;
+  margin: 16px 0 4px;
+  background: rgba(196, 98, 62, 0.07);
+}
+
+/* ══ Reduced motion ════════════════════════════════════════════════════════
+   Everything above collapses to an instant state change. Nothing is lost: the
+   stamps, the dashes and the meter all still say what they said, they just
+   stop moving. */
+
+@media (prefers-reduced-motion: reduce) {
+  .seal-stage,
+  .seal-glyph,
+  .hinge-left,
+  .hinge-right,
+  .write-on,
+  .write-on-delayed,
+  .stamp,
+  .stamp::after,
+  .receipt,
+  .awaiting,
+  .meter-fill::after,
+  .lx-btn:active::after {
+    animation: none !important;
+  }
+  .seal-stage { display: none; }
+  .hinge-left, .hinge-right, .write-on, .write-on-delayed, .receipt, .stamp { opacity: 1; transform: none; clip-path: none; }
+  .stamp::after { opacity: 0; }
+  .meter-fill { transition: none; }
+}
+
+/* ══ Mobile ════════════════════════════════════════════════════════════════
+   The 3D hinge is too subtle to read on a small viewport, so it simplifies to
+   a straight vertical wipe; counter stacks above ledger. */
+
+@media (max-width: 900px) {
+  .ledger-grid { grid-template-columns: minmax(0, 1fr); }
+  .ledger-topbar { flex-direction: column; align-items: flex-start; }
+  .ledger-topbar > div:last-child { align-items: flex-start !important; }
+  .hinge-left, .hinge-right { animation: mobileWipe 320ms ease-out 620ms both; }
+  @keyframes mobileWipe {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .ledger-feed { max-height: none; }
+  .entry { grid-template-columns: 58px minmax(0, 1fr); }
+  .entry > .stamp-cell { grid-column: 2; justify-self: start; margin-top: 6px; }
+}

@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.flow-unify-shell {
+  --bg-base: #f4f0e2;
+  --bg-raised: rgba(255, 255, 255, 0.64);
+  --bg-overlay: #fffaf0;
+  --bg-subtle: #efe8d8;
+  --bg-inverse: #0f0d0a;
+
+  --border-faint: rgba(24, 20, 16, 0.12);
+  --border-subtle: rgba(24, 20, 16, 0.18);
+  --border-default: rgba(24, 20, 16, 0.26);
+  --border-strong: rgba(24, 20, 16, 0.38);
+  --border-focus: rgba(168, 88, 28, 0.6);
+
+  --text-primary: #16120e;
+  --text-secondary: #4f473d;
+  --text-tertiary: #766d60;
+  --text-inverse: #fdf8ef;
+
+  --brand-saffron: #b85a1e;
+  --brand-saffron-dk: #9f4b18;
+  --brand-saffron-lt: #d17c42;
+  --brand-gold: #9d6a23;
+  --brand-gold-lt: #bf8d46;
+
+  --glow-saffron: rgba(184, 90, 30, 0.18);
+  --glow-gold: rgba(191, 141, 70, 0.16);
+  --glow-white: rgba(255, 255, 255, 0.22);
+
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --nav-height: 68px;
+
+  position: relative;
+  min-height: 100vh;
+  color: var(--text-primary);
+  background:
+    radial-gradient(56% 36% at 8% -4%, rgba(240, 179, 80, 0.24) 0%, rgba(240, 179, 80, 0) 72%),
+    radial-gradient(42% 30% at 96% 10%, rgba(126, 167, 232, 0.14) 0%, rgba(126, 167, 232, 0) 72%),
+    linear-gradient(180deg, #f4f0e2 0%, #f2ede0 54%, #f7f3e9 100%);
+}
+
+.flow-unify-atmos {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.flow-unify-atmos::before,
+.flow-unify-atmos::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(58px);
+  animation: flowUnifyFloat 14s ease-in-out infinite;
+}
+
+.flow-unify-atmos::before {
+  width: 420px;
+  height: 420px;
+  left: -120px;
+  top: -80px;
+  background: radial-gradient(circle, rgba(243, 177, 76, 0.46) 0%, rgba(243, 177, 76, 0) 72%);
+}
+
+.flow-unify-atmos::after {
+  width: 360px;
+  height: 360px;
+  right: -120px;
+  top: 200px;
+  background: radial-gradient(circle, rgba(137, 177, 237, 0.36) 0%, rgba(137, 177, 237, 0) 72%);
+  animation-delay: -6s;
+}
+
+.flow-unify-shell .ambient-canvas {
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+}
+
+.flow-unify-page-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.flow-unify-shell .page-enter {
+  animation: flowUnifyPageIn 360ms var(--ease-out) both;
+}
+
+.flow-unify-shell .page-enter h1,
+.flow-unify-shell .page-enter h2 {
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: -0.03em;
+}
+
+.flow-unify-shell .page-enter h3,
+.flow-unify-shell .page-enter h4,
+.flow-unify-shell .page-enter h5,
+.flow-unify-shell .page-enter h6 {
+  font-family: 'Plus Jakarta Sans', var(--font-sans);
+}
+
+.flow-unify-shell :where(.fx-soft-card, .glass-card) {
+  border-color: var(--border-faint);
+  background: var(--bg-raised);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.54);
+}
+
+.flow-unify-shell :where(.fx-soft-card, .glass-card):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(18, 14, 11, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.64);
+}
+
+.flow-unify-shell button,
+.flow-unify-shell .fx-glow-button,
+.flow-unify-shell a[class*='btn'],
+.flow-unify-shell a[class] {
+  transition: transform 180ms var(--ease-spring), box-shadow 180ms var(--ease-default), background 180ms var(--ease-default), border-color 180ms var(--ease-default), color 180ms var(--ease-default);
+}
+
+.flow-unify-shell button:hover,
+.flow-unify-shell .fx-glow-button:hover,
+.flow-unify-shell a[class*='btn']:hover,
+.flow-unify-shell a[class]:hover {
+  transform: translateY(-1px);
+}
+
+.flow-unify-shell :where(button, a[class], .fx-soft-card, .glass-card) {
+  will-change: transform;
+}
+
+.flow-unify-shell :where(button, a[class], .fx-soft-card, .glass-card):active {
+  transform: translateY(0) scale(0.99);
+}
+
+.flow-unify-shell input,
+.flow-unify-shell textarea,
+.flow-unify-shell select {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.flow-unify-shell input::placeholder,
+.flow-unify-shell textarea::placeholder {
+  color: #8a8072;
+}
+
+.flow-unify-shell .reveal-child.visible {
+  filter: saturate(1.02);
+}
+
+.flow-unify-shell .bottom-nav {
+  background: rgba(247, 242, 230, 0.96) !important;
+  border-top: 1px solid rgba(24, 20, 16, 0.16) !important;
+  box-shadow: 0 -8px 26px rgba(18, 14, 11, 0.12) !important;
+}
+
+.flow-unify-shell .bottom-nav [aria-label='AI Search'] {
+  border: 1px solid rgba(28, 20, 14, 0.18) !important;
+  box-shadow: 0 8px 18px rgba(166, 84, 32, 0.3), 0 0 0 3px #f4f0e2 !important;
+}
+
+.flow-unify-shell .bottom-nav-spacer {
+  background: transparent;
+}
+
+@keyframes flowUnifyFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(16px);
+  }
+}
+
+@keyframes flowUnifyPageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 860px) {
+  .flow-unify-shell {
+    --nav-height: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-unify-atmos::before,
+  .flow-unify-atmos::after,
+  .flow-unify-shell .page-enter {
+    animation: none !important;
+  }
+
+  .flow-unify-shell button,
+  .flow-unify-shell :where(.fx-soft-card, .glass-card),
+  .flow-unify-shell .fx-glow-button {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="patterns cover">
+  <rect width="400" height="400" fill="#0E1214"/>
+  <rect x="18" y="18" width="364" height="364" fill="none" stroke="#7FA8C9" stroke-width="1" opacity="0.3"/>
+  <circle cx="90" cy="90" r="2.5" fill="#7FA8C9"/>
+    <circle cx="145" cy="90" r="2.5" fill="#7FA8C9"/><path d="M118 90 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="200" cy="90" r="2.5" fill="#7FA8C9"/>
+    <circle cx="255" cy="90" r="2.5" fill="#7FA8C9"/><path d="M228 90 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="310" cy="90" r="2.5" fill="#7FA8C9"/>
+    <circle cx="90" cy="145" r="2.5" fill="#7FA8C9"/><path d="M63 145 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="145" cy="145" r="2.5" fill="#7FA8C9"/>
+    <circle cx="200" cy="145" r="2.5" fill="#7FA8C9"/><path d="M173 145 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="255" cy="145" r="2.5" fill="#7FA8C9"/>
+    <circle cx="310" cy="145" r="2.5" fill="#7FA8C9"/><path d="M283 145 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="90" cy="200" r="2.5" fill="#7FA8C9"/>
+    <circle cx="145" cy="200" r="2.5" fill="#7FA8C9"/><path d="M118 200 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="200" cy="200" r="2.5" fill="#7FA8C9"/>
+    <circle cx="255" cy="200" r="2.5" fill="#7FA8C9"/><path d="M228 200 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="310" cy="200" r="2.5" fill="#7FA8C9"/>
+    <circle cx="90" cy="255" r="2.5" fill="#7FA8C9"/><path d="M63 255 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="145" cy="255" r="2.5" fill="#7FA8C9"/>
+    <circle cx="200" cy="255" r="2.5" fill="#7FA8C9"/><path d="M173 255 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="255" cy="255" r="2.5" fill="#7FA8C9"/>
+    <circle cx="310" cy="255" r="2.5" fill="#7FA8C9"/><path d="M283 255 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="90" cy="310" r="2.5" fill="#7FA8C9"/>
+    <circle cx="145" cy="310" r="2.5" fill="#7FA8C9"/><path d="M118 310 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="200" cy="310" r="2.5" fill="#7FA8C9"/>
+    <circle cx="255" cy="310" r="2.5" fill="#7FA8C9"/><path d="M228 310 a27 27 0 0 1 54 0" fill="none" stroke="#E0A458" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="310" cy="310" r="2.5" fill="#7FA8C9"/>
+  <text x="200" y="368" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" letter-spacing="4" fill="#7FA8C9" opacity="0.75">PATTERNS</text>
+</svg>

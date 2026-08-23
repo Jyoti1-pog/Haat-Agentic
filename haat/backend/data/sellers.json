@@ -1,0 +1,47 @@
+[
+  {
+    "id": "s_mithila",
+    "name": "Mithila Digital Atelier",
+    "city": "Madhubani",
+    "state": "Bihar",
+    "haat_verified": true,
+    "verified_since": "2024-11-04",
+    "note": "Cooperative of 14 Madhubani painters. KYC + craft provenance verified."
+  },
+  {
+    "id": "s_sanganer",
+    "name": "Sanganer Print House",
+    "city": "Jaipur",
+    "state": "Rajasthan",
+    "haat_verified": true,
+    "verified_since": "2025-01-22",
+    "note": "Fourth-generation block printers. KYC + GST verified."
+  },
+  {
+    "id": "s_lucknow",
+    "name": "Lucknow Craft Collective",
+    "city": "Lucknow",
+    "state": "Uttar Pradesh",
+    "haat_verified": true,
+    "verified_since": "2024-08-17",
+    "note": "Chikankari artisan guild, 60+ members. KYC verified."
+  },
+  {
+    "id": "s_kala",
+    "name": "Kala Institute of Design",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "haat_verified": true,
+    "verified_since": "2025-03-09",
+    "note": "Registered design school. Institutional verification on file."
+  },
+  {
+    "id": "s_jaipur_pigment",
+    "name": "Jaipur Pigment Studio",
+    "city": "Jaipur",
+    "state": "Rajasthan",
+    "haat_verified": false,
+    "verified_since": null,
+    "note": "Onboarded 2026-08-02. KYC submitted, craft provenance review pending."
+  }
+]

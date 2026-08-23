@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" width="760" height="560">
+  <rect width="760" height="560" fill="#FBF8F2"/>
+  <text x="56" y="74" font-family="Georgia, serif" font-size="28" fill="#1A1510">Kolam Grid — 40 Threshold Patterns</text>
+  <text x="56" y="102" font-family="ui-monospace, monospace" font-size="11" fill="#6B6355">Forty pulli kolam grids from Thanjavur doorsteps, redrawn as clean vectors with the dot matrix intact.</text>
+  <line x1="56" y1="124" x2="704" y2="124" stroke="#B8935A" stroke-width="1"/>
+  <g transform="translate(180 140)"><circle cx="90" cy="90" r="2.5" fill="#8A4B1E"/>
+    <circle cx="145" cy="90" r="2.5" fill="#8A4B1E"/><path d="M118 90 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="200" cy="90" r="2.5" fill="#8A4B1E"/>
+    <circle cx="255" cy="90" r="2.5" fill="#8A4B1E"/><path d="M228 90 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="310" cy="90" r="2.5" fill="#8A4B1E"/>
+    <circle cx="90" cy="145" r="2.5" fill="#8A4B1E"/><path d="M63 145 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="145" cy="145" r="2.5" fill="#8A4B1E"/>
+    <circle cx="200" cy="145" r="2.5" fill="#8A4B1E"/><path d="M173 145 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="255" cy="145" r="2.5" fill="#8A4B1E"/>
+    <circle cx="310" cy="145" r="2.5" fill="#8A4B1E"/><path d="M283 145 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="90" cy="200" r="2.5" fill="#8A4B1E"/>
+    <circle cx="145" cy="200" r="2.5" fill="#8A4B1E"/><path d="M118 200 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="200" cy="200" r="2.5" fill="#8A4B1E"/>
+    <circle cx="255" cy="200" r="2.5" fill="#8A4B1E"/><path d="M228 200 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="310" cy="200" r="2.5" fill="#8A4B1E"/>
+    <circle cx="90" cy="255" r="2.5" fill="#8A4B1E"/><path d="M63 255 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="145" cy="255" r="2.5" fill="#8A4B1E"/>
+    <circle cx="200" cy="255" r="2.5" fill="#8A4B1E"/><path d="M173 255 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="255" cy="255" r="2.5" fill="#8A4B1E"/>
+    <circle cx="310" cy="255" r="2.5" fill="#8A4B1E"/><path d="M283 255 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="90" cy="310" r="2.5" fill="#8A4B1E"/>
+    <circle cx="145" cy="310" r="2.5" fill="#8A4B1E"/><path d="M118 310 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="200" cy="310" r="2.5" fill="#8A4B1E"/>
+    <circle cx="255" cy="310" r="2.5" fill="#8A4B1E"/><path d="M228 310 a27 27 0 0 1 54 0" fill="none" stroke="#B8935A" stroke-width="1.4" opacity="0.8"/>
+    <circle cx="310" cy="310" r="2.5" fill="#8A4B1E"/></g>
+  <text x="56" y="534" font-family="ui-monospace, monospace" font-size="10" fill="#6B6355">Delivered by haat · licensed to the named buyer · Royalty-free, personal + small-commercial</text>
+</svg>

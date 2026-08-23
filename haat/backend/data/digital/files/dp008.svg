@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" width="760" height="560">
+  <rect width="760" height="560" fill="#FBF8F2"/>
+  <text x="56" y="74" font-family="Georgia, serif" font-size="28" fill="#1A1510">Devanagari Display — Variable Typeface</text>
+  <text x="56" y="102" font-family="ui-monospace, monospace" font-size="11" fill="#6B6355">A variable display face for Devanagari and Latin, drawn from Nagari woodblock proofs. Two axes, nine weights.</text>
+  <line x1="56" y1="124" x2="704" y2="124" stroke="#B8935A" stroke-width="1"/>
+  <g transform="translate(180 140)"><text x="200" y="240" text-anchor="middle" font-family="Georgia, serif" font-size="150" fill="#8A4B1E">अ</text>
+    <line x1="70" y1="264" x2="330" y2="264" stroke="#B8935A" stroke-width="2"/>
+    <line x1="70" y1="118" x2="330" y2="118" stroke="#B8935A" stroke-width="1" opacity="0.5"/></g>
+  <text x="56" y="534" font-family="ui-monospace, monospace" font-size="10" fill="#6B6355">Delivered by haat · licensed to the named buyer · Desktop + web, 5 seats</text>
+</svg>

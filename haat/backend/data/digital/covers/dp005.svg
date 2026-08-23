@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="MINIATURE digital asset cover">
+  <rect width="400" height="400" fill="#14100B"/>
+  <rect x="18" y="18" width="364" height="364" fill="none" stroke="#C4623E" stroke-width="1" opacity="0.35"/>
+  <rect x="26" y="26" width="348" height="348" fill="none" stroke="#C4623E" stroke-width="0.5" opacity="0.2"/>
+  
+    <path d="M120 300 V170 a80 80 0 0 1 160 0 V300" fill="none" stroke="#C4623E" stroke-width="2.5"/>
+    <path d="M146 300 V176 a54 54 0 0 1 108 0 V300" fill="none" stroke="#8A9B7B" stroke-width="1.6" opacity="0.75"/>
+    <path d="M172 300 V182 a28 28 0 0 1 56 0 V300" fill="none" stroke="#C4623E" stroke-width="1.2" opacity="0.5"/>
+    <line x1="96" y1="300" x2="304" y2="300" stroke="#C4623E" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="200" cy="108" r="9" fill="none" stroke="#8A9B7B" stroke-width="2"/>
+  <text x="200" y="358" text-anchor="middle" font-family="ui-monospace, 'IBM Plex Mono', monospace" font-size="11" letter-spacing="4" fill="#C4623E" opacity="0.8">MINIATURE</text>
+</svg>

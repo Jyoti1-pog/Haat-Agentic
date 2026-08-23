@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="patterns cover">
+  <rect width="400" height="400" fill="#141010"/>
+  <rect x="18" y="18" width="364" height="364" fill="none" stroke="#E8E0D4" stroke-width="1" opacity="0.3"/>
+  <g transform="translate(92 104)" stroke="#C4623E" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(164 104)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(236 104)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(308 104)" stroke="#C4623E" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(92 170)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(164 170)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(236 170)" stroke="#C4623E" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(308 170)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(92 236)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(164 236)" stroke="#C4623E" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(236 236)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(308 236)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(92 302)" stroke="#C4623E" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(164 302)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(236 302)" stroke="#E8E0D4" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+    <g transform="translate(308 302)" stroke="#C4623E" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <circle cx="0" cy="-14" r="6"/><path d="M-11 4 L0 -8 L11 4 M0 -8 V10 M-9 24 L0 10 L9 24"/></g>
+  <text x="200" y="368" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" letter-spacing="4" fill="#E8E0D4" opacity="0.75">PATTERNS</text>
+</svg>

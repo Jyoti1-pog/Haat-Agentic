@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="SANGANERI digital asset cover">
+  <rect width="400" height="400" fill="#0F1418"/>
+  <rect x="18" y="18" width="364" height="364" fill="none" stroke="#7FA8C9" stroke-width="1" opacity="0.35"/>
+  <rect x="26" y="26" width="348" height="348" fill="none" stroke="#7FA8C9" stroke-width="0.5" opacity="0.2"/>
+  <g transform="translate(78 92)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#7FA8C9" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(160 92)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#E0A458" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(242 92)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#7FA8C9" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(324 92)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#E0A458" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(78 174)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#E0A458" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(160 174)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#7FA8C9" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(242 174)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#E0A458" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(324 174)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#7FA8C9" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(78 256)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#7FA8C9" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(160 256)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#E0A458" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(242 256)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#7FA8C9" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(324 256)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#E0A458" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(78 338)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#E0A458" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(160 338)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#7FA8C9" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(242 338)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#E0A458" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#E0A458" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(324 338)">
+      <path d="M0 -22 q16 12 0 30 q-16 -18 0 -30 Z" fill="none" stroke="#7FA8C9" stroke-width="2"/>
+      <line x1="0" y1="8" x2="0" y2="22" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+      <path d="M-12 22 h24" stroke="#7FA8C9" stroke-width="2" stroke-linecap="round"/>
+    </g>
+  <text x="200" y="358" text-anchor="middle" font-family="ui-monospace, 'IBM Plex Mono', monospace" font-size="11" letter-spacing="4" fill="#7FA8C9" opacity="0.8">SANGANERI</text>
+</svg>

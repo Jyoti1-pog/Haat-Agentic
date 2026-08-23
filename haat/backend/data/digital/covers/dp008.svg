@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="fonts cover">
+  <rect width="400" height="400" fill="#12100E"/>
+  <rect x="18" y="18" width="364" height="364" fill="none" stroke="#D9B57C" stroke-width="1" opacity="0.3"/>
+  <text x="200" y="240" text-anchor="middle" font-family="Georgia, serif" font-size="150" fill="#D9B57C">अ</text>
+    <line x1="70" y1="264" x2="330" y2="264" stroke="#C4623E" stroke-width="2"/>
+    <line x1="70" y1="118" x2="330" y2="118" stroke="#C4623E" stroke-width="1" opacity="0.5"/>
+  <text x="200" y="368" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" letter-spacing="4" fill="#D9B57C" opacity="0.75">FONTS</text>
+</svg>

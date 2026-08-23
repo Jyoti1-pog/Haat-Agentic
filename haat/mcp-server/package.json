@@ -1,0 +1,15 @@
+{
+  "name": "haat-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for haat — lets an AI agent discover, buy and receive digital goods from Indian craftspeople",
+  "type": "module",
+  "bin": { "haat-mcp": "./index.js" },
+  "main": "index.js",
+  "files": ["index.js", "README.md"],
+  "engines": { "node": ">=18" },
+  "keywords": ["mcp", "model-context-protocol", "agentic-commerce", "marketplace", "razorpay"],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+.env
+*.log
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/users.json
+
+# Runtime state for the agentic-commerce surface: orders, entitlements, audit
+# trail. Regenerated on demand — the seed catalogue beside it is committed.
+data/agent-store.json
+data/agent-store.json.tmp

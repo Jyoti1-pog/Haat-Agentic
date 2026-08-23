@@ -1,0 +1,23 @@
+[build]
+  base    = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# ── API proxy — MUST come before the SPA fallback ──────────────────────────────
+# Netlify forwards /api/* to the Render backend transparently (no CORS needed).
+# Set BACKEND_URL in Netlify → Site settings → Environment variables
+# e.g.  BACKEND_URL = https://haat-backend.onrender.com
+[[redirects]]
+  from   = "/api/*"
+  to     = "https://agentic-commerce-backend-29f2.onrender.com/api/:splat"
+  status = 200
+  force  = true
+
+# ── SPA fallback — all React Router routes ─────────────────────────────────────
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200

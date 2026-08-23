@@ -1,0 +1,201 @@
+[
+  {
+    "id": "dd_001",
+    "product_id": "dp001",
+    "kind": "file",
+    "storage_path": "madhubani-motif-pack.svg",
+    "filename": "madhubani-motif-pack-v2.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-14T09:00:00.000Z"
+  },
+  {
+    "id": "dd_002",
+    "product_id": "dp002",
+    "kind": "file",
+    "storage_path": "sanganeri-brush-set.svg",
+    "filename": "sanganeri-brush-set-v1.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-14T09:00:00.000Z"
+  },
+  {
+    "id": "dd_003",
+    "product_id": "dp003",
+    "kind": "code",
+    "storage_path": null,
+    "filename": null,
+    "code_pool": [
+      "CHIK-LKO-7F2A-9QD4",
+      "CHIK-LKO-3M8B-1XR7",
+      "CHIK-LKO-5T6C-2ZK9",
+      "CHIK-LKO-9H4D-6PL2",
+      "CHIK-LKO-2W7E-4NM8",
+      "CHIK-LKO-8K1F-7RT3",
+      "CHIK-LKO-4B9G-3JV6",
+      "CHIK-LKO-6Z3H-8CX1",
+      "CHIK-LKO-1Q5J-5DW9",
+      "CHIK-LKO-3N8K-2FY4",
+      "CHIK-LKO-7R2L-9GB5",
+      "CHIK-LKO-5V6M-1HN7"
+    ],
+    "external_url": null,
+    "created_at": "2026-08-14T09:00:00.000Z"
+  },
+  {
+    "id": "dd_004",
+    "product_id": "dp004",
+    "kind": "code",
+    "storage_path": null,
+    "filename": null,
+    "code_pool": [
+      "KALA-TXD-A41K-88VP",
+      "KALA-TXD-B72N-19WQ",
+      "KALA-TXD-C35P-42XR",
+      "KALA-TXD-D68Q-71YS",
+      "KALA-TXD-E92R-56ZT",
+      "KALA-TXD-F14S-83AU",
+      "KALA-TXD-G57T-29BV",
+      "KALA-TXD-H80U-64CW",
+      "KALA-TXD-J23V-97DX",
+      "KALA-TXD-K46W-38EY",
+      "KALA-TXD-L79X-15FZ",
+      "KALA-TXD-M02Y-72GA"
+    ],
+    "external_url": null,
+    "created_at": "2026-08-14T09:00:00.000Z"
+  },
+  {
+    "id": "dd_005",
+    "product_id": "dp005",
+    "kind": "file",
+    "storage_path": "miniature-pigment-presets.svg",
+    "filename": "miniature-pigment-presets.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-14T09:00:00.000Z"
+  },
+  {
+    "id": "dd_006",
+    "product_id": "dp006",
+    "kind": "file",
+    "storage_path": "kanjivaram-reference-pack.svg",
+    "filename": "kanjivaram-reference-pack.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-14T09:00:00.000Z"
+  },
+  {
+    "id": "dd_dp007",
+    "product_id": "dp007",
+    "kind": "file",
+    "storage_path": "dp007.svg",
+    "filename": "dp007-patterns.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "dd_dp008",
+    "product_id": "dp008",
+    "kind": "file",
+    "storage_path": "dp008.svg",
+    "filename": "dp008-fonts.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "dd_dp009",
+    "product_id": "dp009",
+    "kind": "file",
+    "storage_path": "dp009.svg",
+    "filename": "dp009-patterns.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "dd_dp010",
+    "product_id": "dp010",
+    "kind": "file",
+    "storage_path": "dp010.svg",
+    "filename": "dp010-audio.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "dd_dp011",
+    "product_id": "dp011",
+    "kind": "file",
+    "storage_path": "dp011.svg",
+    "filename": "dp011-patterns.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "dd_dp012",
+    "product_id": "dp012",
+    "kind": "code",
+    "storage_path": null,
+    "filename": null,
+    "code_pool": [
+      "DP012-01-IWD",
+      "DP012-02-LLK",
+      "DP012-03-OAR",
+      "DP012-04-QZY",
+      "DP012-05-TP5",
+      "DP012-06-WEC",
+      "DP012-07-Z3J",
+      "DP012-08-11SQ",
+      "DP012-09-14HX",
+      "DP012-10-1774",
+      "DP012-11-19WB",
+      "DP012-12-1CLI"
+    ],
+    "external_url": null,
+    "created_at": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "dd_dp013",
+    "product_id": "dp013",
+    "kind": "file",
+    "storage_path": "dp013.svg",
+    "filename": "dp013-photography.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "dd_dp014",
+    "product_id": "dp014",
+    "kind": "file",
+    "storage_path": "dp014.svg",
+    "filename": "dp014-brushes.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "dd_dp015",
+    "product_id": "dp015",
+    "kind": "link",
+    "storage_path": null,
+    "filename": null,
+    "code_pool": null,
+    "external_url": "https://sanganerprint.example.com/workshop",
+    "created_at": "2026-08-18T10:00:00.000Z"
+  },
+  {
+    "id": "dd_dp016",
+    "product_id": "dp016",
+    "kind": "file",
+    "storage_path": "dp016.svg",
+    "filename": "dp016-ebooks.svg",
+    "code_pool": null,
+    "external_url": null,
+    "created_at": "2026-08-18T10:00:00.000Z"
+  }
+]

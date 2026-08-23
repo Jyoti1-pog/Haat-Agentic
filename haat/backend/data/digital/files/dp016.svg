@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" width="760" height="560">
+  <rect width="760" height="560" fill="#FBF8F2"/>
+  <text x="56" y="74" font-family="Georgia, serif" font-size="28" fill="#1A1510">The Weaver’s Year — Illustrated Ebook</text>
+  <text x="56" y="102" font-family="ui-monospace, monospace" font-size="11" fill="#6B6355">Two hundred pages following one Banarasi weaving family through twelve months, with process photography.</text>
+  <line x1="56" y1="124" x2="704" y2="124" stroke="#B8935A" stroke-width="1"/>
+  <g transform="translate(180 140)"><path d="M200 112 v186" stroke="#B8935A" stroke-width="2"/>
+    <path d="M200 112 q-70 -22 -120 0 v180 q50 -20 120 0 Z" fill="none" stroke="#8A4B1E" stroke-width="2"/>
+    <path d="M200 112 q70 -22 120 0 v180 q-50 -20 -120 0 Z" fill="none" stroke="#8A4B1E" stroke-width="2"/>
+    <line x1="100" y1="152" x2="176" y2="148" stroke="#B8935A" stroke-width="1" opacity="0.55"/><line x1="224" y1="148" x2="300" y2="152" stroke="#B8935A" stroke-width="1" opacity="0.55"/>
+    <line x1="100" y1="174" x2="176" y2="170" stroke="#B8935A" stroke-width="1" opacity="0.55"/><line x1="224" y1="170" x2="300" y2="174" stroke="#B8935A" stroke-width="1" opacity="0.55"/>
+    <line x1="100" y1="196" x2="176" y2="192" stroke="#B8935A" stroke-width="1" opacity="0.55"/><line x1="224" y1="192" x2="300" y2="196" stroke="#B8935A" stroke-width="1" opacity="0.55"/>
+    <line x1="100" y1="218" x2="176" y2="214" stroke="#B8935A" stroke-width="1" opacity="0.55"/><line x1="224" y1="214" x2="300" y2="218" stroke="#B8935A" stroke-width="1" opacity="0.55"/>
+    <line x1="100" y1="240" x2="176" y2="236" stroke="#B8935A" stroke-width="1" opacity="0.55"/><line x1="224" y1="236" x2="300" y2="240" stroke="#B8935A" stroke-width="1" opacity="0.55"/>
+    <line x1="100" y1="262" x2="176" y2="258" stroke="#B8935A" stroke-width="1" opacity="0.55"/><line x1="224" y1="258" x2="300" y2="262" stroke="#B8935A" stroke-width="1" opacity="0.55"/></g>
+  <text x="56" y="534" font-family="ui-monospace, monospace" font-size="10" fill="#6B6355">Delivered by haat · licensed to the named buyer · Personal reading, non-transferable</text>
+</svg>

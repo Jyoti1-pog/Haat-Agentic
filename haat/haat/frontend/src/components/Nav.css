@@ -1,0 +1,530 @@
+.lux-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.lux-nav.is-light {
+  background: linear-gradient(180deg, rgba(248, 244, 234, 0.9) 0%, rgba(245, 240, 228, 0.82) 100%);
+  border-bottom: 1px solid rgba(32, 26, 22, 0.08);
+}
+
+.lux-nav.is-dark {
+  background: linear-gradient(180deg, rgba(15, 17, 23, 0.9) 0%, rgba(15, 17, 23, 0.8) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lux-nav.is-scrolled {
+  box-shadow: 0 12px 30px rgba(18, 14, 11, 0.14);
+}
+
+.lux-nav-glow {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: min(66vw, 780px);
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent 0%, rgba(249, 115, 22, 0.42) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+.lux-nav-inner {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.lux-nav-brand {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lux-nav-brand-tag {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(28, 24, 20, 0.64);
+  border: 1px solid rgba(28, 24, 20, 0.16);
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.lux-nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(28, 24, 20, 0.16);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.lux-nav-link {
+  text-decoration: none;
+  color: #6a6154;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 6px 14px;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.lux-nav-link:hover,
+.lux-nav-link.is-active {
+  color: #1a1510;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.lux-nav-link:hover {
+  transform: translateY(-1px);
+}
+
+.lux-nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lux-icon-btn {
+  border: 1px solid rgba(28, 24, 20, 0.16);
+  background: rgba(255, 255, 255, 0.45);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #665f52;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.lux-icon-btn:hover {
+  color: #1d1913;
+  border-color: rgba(28, 24, 20, 0.34);
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+.lux-cart-btn {
+  position: relative;
+}
+
+.lux-cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #b84a0d;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #fff;
+  animation: luxCartPop 420ms ease;
+}
+
+.lux-nav-chat,
+.lux-nav-auth-cta {
+  text-decoration: none;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border: 1px solid rgba(22, 18, 15, 0.18);
+}
+
+.lux-nav-chat {
+  background: rgba(255, 255, 255, 0.8);
+  color: #2b241b;
+}
+
+.lux-nav-auth-link {
+  text-decoration: none;
+  font-size: 13px;
+  color: #6a6154;
+  padding: 6px 10px;
+}
+
+.lux-nav-auth-link:hover {
+  color: #1f1812;
+}
+
+.lux-nav-auth-cta {
+  background: #d8b8ea;
+  color: #1a1510;
+}
+
+.lux-avatar-wrap {
+  position: relative;
+}
+
+.lux-avatar-btn {
+  border: 1px solid rgba(28, 24, 20, 0.16);
+  background: rgba(255, 255, 255, 0.58);
+  border-radius: 999px;
+  padding: 5px 10px 5px 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #2a241c;
+}
+
+.lux-avatar-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f9a34b 0%, #f97316 50%, #ba4f13 100%);
+  color: #21170f;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lux-avatar-label {
+  font-size: 12px;
+  font-weight: 600;
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lux-avatar-btn svg {
+  transition: transform 180ms ease;
+}
+
+.lux-avatar-btn svg.is-open {
+  transform: rotate(180deg);
+}
+
+.lux-avatar-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 220px;
+  border: 1px solid rgba(28, 24, 20, 0.18);
+  border-radius: 14px;
+  background: rgba(251, 249, 242, 0.98);
+  box-shadow: 0 16px 36px rgba(17, 13, 10, 0.16);
+  overflow: hidden;
+  animation: luxMenuFade 180ms ease;
+}
+
+.lux-avatar-menu-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(28, 24, 20, 0.1);
+}
+
+.lux-avatar-menu-head p {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+  color: #1b1611;
+}
+
+.lux-avatar-menu-head span {
+  font-size: 11px;
+  color: #7f7567;
+}
+
+.lux-avatar-menu button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #544b3f;
+}
+
+.lux-avatar-menu button:hover {
+  background: rgba(255, 255, 255, 0.8);
+  color: #1d1812;
+}
+
+.lux-avatar-menu button.danger {
+  color: #bb3b3b;
+}
+
+.lux-hamburger {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(28, 24, 20, 0.18);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lux-hamburger span {
+  width: 16px;
+  height: 1.5px;
+  background: #3c3429;
+  transition: transform 190ms ease, opacity 190ms ease;
+}
+
+.lux-hamburger.is-open span:nth-child(1) {
+  transform: translateY(5.5px) rotate(45deg);
+}
+
+.lux-hamburger.is-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.lux-hamburger.is-open span:nth-child(3) {
+  transform: translateY(-5.5px) rotate(-45deg);
+}
+
+.lux-mobile-panel {
+  position: fixed;
+  top: 68px;
+  left: 0;
+  right: 0;
+  z-index: 95;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  overflow: hidden;
+  max-height: 0;
+  padding: 0 18px;
+  transition: max-height 280ms ease, padding 280ms ease;
+  display: none;
+}
+
+.lux-mobile-panel.is-light {
+  background: rgba(247, 242, 230, 0.96);
+  border-bottom: 1px solid rgba(28, 24, 20, 0.14);
+}
+
+.lux-mobile-panel.open {
+  max-height: 420px;
+  padding: 14px 18px 20px;
+}
+
+.lux-mobile-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(28, 24, 20, 0.12);
+  margin-bottom: 8px;
+}
+
+.lux-mobile-panel-head span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7d7467;
+}
+
+.lux-mobile-panel a,
+.lux-mobile-panel button {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-decoration: none;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2d261d;
+  padding: 11px 4px;
+  border-bottom: 1px solid rgba(28, 24, 20, 0.08);
+}
+
+.lux-mobile-panel a.is-active {
+  color: #f97316;
+}
+
+.lux-mobile-panel .lux-mobile-highlight {
+  color: #f97316;
+}
+
+.lux-mobile-panel .danger {
+  color: #ba3b3b;
+}
+
+.lux-mobile-panel .lux-mobile-signup {
+  margin-top: 8px;
+  border: 1px solid rgba(28, 24, 20, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.84);
+  text-align: center;
+}
+
+.lux-search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(16, 13, 11, 0.42);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 82px;
+}
+
+.lux-search-dismiss {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.lux-search-panel {
+  width: min(620px, calc(100% - 26px));
+  border-radius: 16px;
+  border: 1px solid rgba(28, 24, 20, 0.2);
+  background: rgba(251, 248, 238, 0.98);
+  box-shadow: 0 20px 40px rgba(12, 9, 7, 0.22);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+.lux-search-panel form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+}
+
+.lux-search-panel form svg {
+  color: #72675a;
+  flex-shrink: 0;
+}
+
+.lux-search-panel input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 16px;
+  color: #1c1711;
+  width: 100%;
+}
+
+.lux-search-esc {
+  border: 1px solid rgba(28, 24, 20, 0.24);
+  border-radius: 6px;
+  font-size: 11px;
+  padding: 3px 7px;
+  color: #6e6658;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.75);
+  font-family: inherit;
+}
+
+.lux-search-panel p {
+  border-top: 1px solid rgba(28, 24, 20, 0.1);
+  margin: 0;
+  padding: 10px 16px 12px;
+  color: #7b7164;
+  font-size: 12px;
+}
+
+@keyframes luxMenuFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes luxCartPop {
+  0% {
+    transform: scale(0.7);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 1040px) {
+  .lux-nav-brand-tag {
+    display: none;
+  }
+
+  .lux-nav-chat {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .lux-nav-center,
+  .lux-nav-auth-link,
+  .lux-nav-auth-cta,
+  .lux-avatar-wrap {
+    display: none;
+  }
+
+  .lux-hamburger,
+  .lux-mobile-panel {
+    display: flex;
+  }
+
+  .lux-mobile-panel {
+    display: block;
+    top: 56px;
+  }
+
+  .lux-nav {
+    height: 56px;
+  }
+}
+
+@media (max-width: 560px) {
+  .lux-icon-btn:first-child {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lux-nav,
+  .lux-nav-link,
+  .lux-icon-btn,
+  .lux-hamburger span,
+  .lux-mobile-panel,
+  .lux-avatar-menu,
+  .lux-cart-badge {
+    transition: none !important;
+    animation: none !important;
+  }
+}
