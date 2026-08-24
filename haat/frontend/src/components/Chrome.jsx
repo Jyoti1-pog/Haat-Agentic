@@ -131,7 +131,7 @@ export function Footer() {
 
           <div>
             <div className="h-eyebrow" style={{ marginBottom: 14 }}>For agents</div>
-            {[['Agent checkout', '/agent-checkout'], ['Platform activity', '/ops'], ['Sell on haat', '/seller']].map(([l, to]) => (
+            {[['Documentation', '/docs'], ['Agent checkout', '/agent-checkout'], ['Platform activity', '/ops'], ['Sell on haat', '/seller']].map(([l, to]) => (
               <Link key={to} to={to} style={{ display: 'block', padding: '5px 0', fontSize: 14, color: 'var(--muted)' }}>{l}</Link>
             ))}
             <a href="/api/agent-commerce/manifest" style={{ display: 'block', padding: '5px 0', fontSize: 14, color: 'var(--muted)' }}>
@@ -147,7 +147,27 @@ export function Footer() {
           </div>
         </div>
 
-        <div style={{ marginTop: 44, paddingTop: 20, borderTop: '1px solid var(--rule)', display: 'flex', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap' }}>
+        {/* Docs get a button rather than a link in a list: it is the one page
+            that answers "how do I use this", for a shopper and for whoever is
+            wiring up an agent, and it should be findable without hunting. */}
+        <div style={{
+          marginTop: 40, padding: '22px 24px', border: '1px solid var(--rule)',
+          background: 'var(--ink-raised)', display: 'flex', gap: 20,
+          alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap',
+        }}>
+          <div>
+            <div className="h-sub" style={{ fontSize: 19, marginBottom: 5 }}>Using haat</div>
+            <p className="h-body h-muted" style={{ fontSize: 13.5, maxWidth: '48ch' }}>
+              Buying, selling, and connecting an AI agent over MCP — with this deployment&rsquo;s
+              real limits, tools and status.
+            </p>
+          </div>
+          <Link to="/docs" className="h-btn" style={{ whiteSpace: 'nowrap' }}>
+            Read the docs
+          </Link>
+        </div>
+
+        <div style={{ marginTop: 34, paddingTop: 20, borderTop: '1px solid var(--rule)', display: 'flex', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap' }}>
           <span className="h-data h-faint">© 2026 haat · every sale recorded in the ledger</span>
           <span className="h-data h-faint">Payments by Razorpay · prices in INR</span>
         </div>

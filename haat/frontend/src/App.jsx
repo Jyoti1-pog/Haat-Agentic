@@ -15,6 +15,7 @@ import LibraryPage        from './pages/LibraryPage'
 import SellerListingPage  from './pages/SellerListingPage'
 import SellerDashboardPage from './pages/SellerDashboardPage'
 import OpsPage            from './pages/OpsPage'
+import DocsPage           from './pages/DocsPage'
 import AgentCheckoutPage  from './pages/AgentCheckoutPage'
 import PrivacyPage        from './pages/PrivacyPage'
 import TermsPage          from './pages/TermsPage'
@@ -49,6 +50,7 @@ function Shell() {
           <Route path="/sell"           element={<SellerListingPage />} />
           <Route path="/seller"         element={<SellerDashboardPage />} />
           <Route path="/ops"            element={<OpsPage />} />
+          <Route path="/docs"           element={<DocsPage />} />
           <Route path="/agent-checkout" element={<AgentCheckoutPage />} />
           <Route path="/privacy"        element={<PrivacyPage />} />
           <Route path="/terms"          element={<TermsPage />} />
