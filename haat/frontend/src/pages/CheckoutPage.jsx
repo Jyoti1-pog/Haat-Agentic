@@ -90,20 +90,29 @@ export default function CheckoutPage() {
     const delivered = results.filter(r => r.result.status === 'delivered')
     return (
       <div className="h-wrap h-page" style={{ maxWidth: 760 }}>
-        <p className="h-eyebrow" style={{ marginBottom: 14 }}>Paid · delivered</p>
+        <p className="h-eyebrow" style={{ marginBottom: 14 }}>
+          {delivered.length ? 'Paid · delivered' : 'Nothing went through'}
+        </p>
         <h1 className="h-title" style={{ marginBottom: 14 }}>
           {delivered.length === results.length
             ? 'Everything arrived.'
-            : `${delivered.length} of ${results.length} arrived.`}
+            : delivered.length === 0
+              ? 'Nothing arrived.'
+              : `${delivered.length} of ${results.length} arrived.`}
         </h1>
         <p className="h-body h-muted" style={{ marginBottom: 12 }}>
-          Sent to <span style={{ color: 'var(--parchment)' }}>{email}</span>. It is in your library
-          permanently — download links are re-minted fresh every time you open it.
+          {delivered.length
+            ? <>Sent to <span style={{ color: 'var(--parchment)' }}>{email}</span>. It is in your library
+              permanently — download links are re-minted fresh every time you open it.</>
+            : <>Nothing was charged, and nothing was added to your library. The reason each line
+              gave is below.</>}
         </p>
         <p className="h-data h-faint" style={{ marginBottom: 32 }}>
           {paidWith === 'razorpay'
             ? 'Paid through Razorpay · signature verified server-side'
-            : 'No card was taken — this deployment has no Razorpay keys, so the card step was stood in for'}
+            : paidWith === 'simulated'
+              ? 'No card was taken — this deployment has no Razorpay keys, so the card step was stood in for'
+              : 'Nothing was charged.'}
         </p>
 
         <div style={{ display: 'grid', gap: 14, marginBottom: 32 }}>

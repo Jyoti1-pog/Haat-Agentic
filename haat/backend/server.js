@@ -16,6 +16,7 @@ import sellerProductsRouter from './routes/sellerProducts.js'
 import * as store from './services/agentStore.js'
 import * as storage from './services/storage.js'
 import * as llm from './services/llm.js'
+import * as razorpay from './services/razorpay.js'
 import { describe as describeAuth } from './middleware/agentAuth.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -134,6 +135,7 @@ app.get('/api/health', async (_req, res) => {
     store: store_,
     ai_buyer: llm.describe(),
     agent_auth: describeAuth(),
+    payments: { provider: 'razorpay', mode: razorpay.mode(), credentials: razorpay.credentialCheck() },
   })
 })
 

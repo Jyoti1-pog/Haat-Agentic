@@ -623,7 +623,7 @@ function humanOrderResponse(order, product) {
   return {
     order_id: order.id,
     razorpay_order_id: order.razorpay_order_id,
-    razorpay_key_id: process.env.RAZORPAY_KEY_ID ?? null,
+    razorpay_key_id: razorpay.publishableKeyId(),
     razorpay_mode: order.razorpay_mode,
     amount_paise: order.amount_paise,
     amount: fmtBoth(order.amount_paise),

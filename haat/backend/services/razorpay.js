@@ -26,9 +26,61 @@ import fetch from 'node-fetch'
 
 const API = 'https://api.razorpay.com/v1'
 
-const keyId     = () => process.env.RAZORPAY_KEY_ID ?? ''
-const keySecret = () => process.env.RAZORPAY_KEY_SECRET ?? ''
-const webhookSecret = () => process.env.RAZORPAY_WEBHOOK_SECRET ?? ''
+// Trimmed, always. A value pasted into a dashboard env field arrives with a
+// trailing newline more often than not, and an untrimmed secret builds a Basic
+// auth header Razorpay rejects as "Authentication failed" — an error that reads
+// like wrong keys rather than like whitespace.
+const env = name => process.env[name]?.trim() ?? ''
+
+const keyId     = () => env('RAZORPAY_KEY_ID')
+const keySecret = () => env('RAZORPAY_KEY_SECRET')
+const webhookSecret = () => env('RAZORPAY_WEBHOOK_SECRET')
+
+/**
+ * What is actually wrong with the configured credentials, in words.
+ *
+ * "Authentication failed" is all Razorpay says, and it covers several very
+ * different mistakes. The commonest by far is pasting the masked values the
+ * dashboard shows for an already-generated key — those are asterisks, not the
+ * key — so this names that case rather than leaving the operator to guess.
+ * Reported by /api/health. Never returns the secret itself.
+ */
+export function credentialCheck() {
+  const rawId = process.env.RAZORPAY_KEY_ID ?? ''
+  const rawSecret = process.env.RAZORPAY_KEY_SECRET ?? ''
+  const id = rawId.trim()
+  const secret = rawSecret.trim()
+
+  const problems = []
+  if (!id) problems.push('RAZORPAY_KEY_ID is not set')
+  if (!secret) problems.push('RAZORPAY_KEY_SECRET is not set')
+
+  if (id.includes('*') || secret.includes('*')) {
+    problems.push(
+      'contains "*" — that is the masked placeholder the dashboard shows for a key ' +
+      'already generated, not the key. Razorpay reveals a secret once, at generation. ' +
+      'Click Regenerate and copy both values from that dialog.',
+    )
+  }
+  if (id && !/^rzp_(test|live)_/.test(id)) {
+    problems.push('key id does not begin with rzp_test_ or rzp_live_')
+  }
+  // Whitespace is worth reporting but is not a fault any more — it is trimmed
+  // on the way out, so a credential that only had that is perfectly usable.
+  const notes = []
+  if (rawId !== id || rawSecret !== secret) {
+    notes.push('had surrounding whitespace, which is trimmed before use')
+  }
+
+  return {
+    key_id_prefix: id ? id.slice(0, 12) + '…' : null,
+    key_id_length: id.length || null,
+    secret_length: secret.length || null,
+    looks_usable: problems.length === 0,
+    problems,
+    notes,
+  }
+}
 
 export function isConfigured() {
   return Boolean(keyId() && keySecret())
@@ -61,6 +113,19 @@ function agentPathSecret() {
     )
   }
   return standInSecret
+}
+
+/**
+ * The key id safe to hand a browser, or null.
+ *
+ * Null whenever the credentials cannot work — unset, masked, malformed. The
+ * storefront reads this to decide whether to open Razorpay's card form, and
+ * opening a card form against a key that cannot authenticate is worse than not
+ * opening one: the shopper types a card number into a dialog that was doomed
+ * before it rendered. Trimmed, because the id is sent to Razorpay as-is.
+ */
+export function publishableKeyId() {
+  return credentialCheck().looks_usable ? keyId() : null
 }
 
 export function mode() {
@@ -112,6 +177,16 @@ export async function createOrder({ amountPaise, receipt, notes = {} }) {
   const body = await res.json().catch(() => ({}))
   if (!res.ok) {
     const detail = body?.error?.description ?? `HTTP ${res.status}`
+    if (res.status === 401) {
+      // Razorpay will not say why. Say why in the log, where the operator looks,
+      // rather than putting deployment advice in a shopper's receipt.
+      const check = credentialCheck()
+      console.error('[razorpay] credentials rejected — ' + (check.problems.length
+        ? check.problems.join(' · ')
+        : `key id ${check.key_id_prefix} (${check.key_id_length} chars) and a ` +
+          `${check.secret_length}-char secret were sent and are not a valid pair; ` +
+          'regenerate the test key and copy both values from the dialog'))
+    }
     const err = new Error(`Razorpay order creation failed: ${detail}`)
     err.razorpay = body?.error ?? null
     err.status = res.status
