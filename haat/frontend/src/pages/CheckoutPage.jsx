@@ -32,6 +32,7 @@ export default function CheckoutPage() {
   const [phase, setPhase] = useState('idle')      // idle | working | done
   const [results, setResults] = useState([])
   const [mode, setMode] = useState(null)
+  const [paidWith, setPaidWith] = useState(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -54,13 +55,27 @@ export default function CheckoutPage() {
 
     const out = []
     try {
-      // One order per line. A failure on line three must not undo lines one and
-      // two — each is its own order, and each result says what happened to it.
+      // One order per line, each with its own Razorpay checkout. A failure on
+      // line three must not undo lines one and two — each is its own order, and
+      // each result says what happened to it.
       for (const line of lines) {
-        const r = await shop.purchase(line.id, email.trim().toLowerCase())
-        out.push({ line, result: r })
-        setResults([...out])
-        if (r.razorpay_mode) setMode(r.razorpay_mode)
+        try {
+          const r = await shop.purchase(line.id, email.trim().toLowerCase())
+          out.push({ line, result: r })
+          setResults([...out])
+          if (r.razorpay_mode) setMode(r.razorpay_mode)
+          if (r.paid_with) setPaidWith(r.paid_with)
+        } catch (err) {
+          // Closing the card form is a decision, not an error. Stop here and
+          // keep whatever already completed; nothing was charged for this line.
+          if (err.cancelled) {
+            if (out.length) { setResults([...out]); setPhase('done') }
+            else { setError('Payment cancelled — nothing was charged.'); setPhase('idle') }
+            return
+          }
+          out.push({ line, result: { status: 'payment_failed', reason: err.message } })
+          setResults([...out])
+        }
       }
       if (!direct) clear()
       setPhase('done')
@@ -81,9 +96,14 @@ export default function CheckoutPage() {
             ? 'Everything arrived.'
             : `${delivered.length} of ${results.length} arrived.`}
         </h1>
-        <p className="h-body h-muted" style={{ marginBottom: 32 }}>
+        <p className="h-body h-muted" style={{ marginBottom: 12 }}>
           Sent to <span style={{ color: 'var(--parchment)' }}>{email}</span>. It is in your library
           permanently — download links are re-minted fresh every time you open it.
+        </p>
+        <p className="h-data h-faint" style={{ marginBottom: 32 }}>
+          {paidWith === 'razorpay'
+            ? 'Paid through Razorpay · signature verified server-side'
+            : 'No card was taken — this deployment has no Razorpay keys, so the card step was stood in for'}
         </p>
 
         <div style={{ display: 'grid', gap: 14, marginBottom: 32 }}>
@@ -173,7 +193,7 @@ export default function CheckoutPage() {
           </div>}
 
           <button className="h-btn" onClick={pay} disabled={!valid || phase === 'working'} style={{ width: '100%' }}>
-            {phase === 'working' ? 'Processing…' : `Pay ${inr(total)}`}
+            {phase === 'working' ? 'Waiting for payment…' : `Pay ${inr(total)}`}
           </button>
 
           {phase === 'working' && results.length > 0 && (
@@ -183,9 +203,9 @@ export default function CheckoutPage() {
           )}
 
           <p className="h-data h-faint" style={{ marginTop: 18, lineHeight: 1.7 }}>
-            A real Razorpay order is created for every line, and the payment signature is verified
-            server-side before anything is delivered.
-            {mode === 'unconfigured' && ' This deployment has no Razorpay keys, so the card step is stood in for — every order is stamped “unconfigured” in the ledger.'}
+            {mode === 'unconfigured'
+              ? 'This deployment has no Razorpay keys, so no card is taken — the card step is stood in for and every order is stamped “unconfigured” in the ledger. The signature is still verified server-side.'
+              : 'Razorpay’s secure card form opens for each item. Nothing is delivered until the payment signature is verified server-side and confirmed with Razorpay.'}
           </p>
         </div>
       </div>
