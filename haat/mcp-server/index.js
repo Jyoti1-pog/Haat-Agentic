@@ -27,7 +27,9 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js'
 
 // ── Configuration ────────────────────────────────────────────────────────────
-const HAAT_URL = (process.env.HAAT_URL ?? 'http://localhost:3001').replace(/\/$/, '')
+// Trimmed: HAAT_URL arrives from an MCP client config file where a stray space
+// is easy to introduce and produces an unparseable request URL.
+const HAAT_URL = (process.env.HAAT_URL ?? 'http://localhost:3001').trim().replace(/\/+$/, '')
 
 // One MCP process is one agent session; give each client its own so they do not
 // share a spend budget.
@@ -37,7 +39,7 @@ const TIMEOUT   = Number(process.env.HAAT_TIMEOUT_MS ?? 30_000)
 
 // Deployments that enforce keys namespace your session to the key, so two
 // agents cannot collide or spend each other's budget. Open ones ignore it.
-const API_KEY   = process.env.HAAT_API_KEY ?? ''
+const API_KEY   = process.env.HAAT_API_KEY?.trim() ?? ''
 
 // ── HTTP ─────────────────────────────────────────────────────────────────────
 async function call(path, { method = 'GET', body } = {}) {

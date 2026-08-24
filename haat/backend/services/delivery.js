@@ -34,10 +34,32 @@ function signingSecret() {
 const sign = (entitlementId, expMs) =>
   crypto.createHmac('sha256', signingSecret()).update(`${entitlementId}|${expMs}`).digest('hex')
 
+/**
+ * The origin links are built against.
+ *
+ * Trimmed, because environment variables get pasted into web forms and arrive
+ * with stray whitespace — a leading space produced " https://host/api/..." in
+ * production, which browsers quietly tolerate and fetch() and every agent
+ * reject. Validated too: a malformed origin should fail loudly here rather than
+ * silently emit links nobody can open.
+ */
+function publicOrigin() {
+  const raw = process.env.PUBLIC_BASE_URL?.trim()
+  if (!raw) return ''
+  const cleaned = raw.replace(/\/+$/, '')
+  try {
+    new URL(cleaned)
+    return cleaned
+  } catch {
+    console.warn(`[delivery] PUBLIC_BASE_URL is not a valid URL (${JSON.stringify(raw)}) — emitting relative links instead`)
+    return ''
+  }
+}
+
 export function buildSignedUrl(entitlementId, ttlHours = TTL_HOURS) {
   const exp = Date.now() + ttlHours * 3600 * 1000
   const sig = sign(entitlementId, exp)
-  const base = process.env.PUBLIC_BASE_URL?.replace(/\/$/, '') ?? ''
+  const base = publicOrigin()
   return {
     url: `${base}/api/digital/download/${entitlementId}?exp=${exp}&sig=${sig}`,
     expires_at: new Date(exp).toISOString(),

@@ -31,8 +31,12 @@ const DATA_DIR = join(__dirname, '../data')
 const FILE_PATH = join(DATA_DIR, 'agent-store.json')
 const KEY = process.env.HAAT_STORE_KEY ?? 'haat:store:v1'
 
-const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN
+// Trimmed for the same reason PUBLIC_BASE_URL is: these are pasted by hand into
+// a dashboard, and a stray space turns a working connection into an obscure fetch
+// failure at the first write.
+const env = name => process.env[name]?.trim() || undefined
+const REDIS_URL = env('UPSTASH_REDIS_REST_URL') ?? env('KV_REST_API_URL')
+const REDIS_TOKEN = env('UPSTASH_REDIS_REST_TOKEN') ?? env('KV_REST_API_TOKEN')
 
 export function driver() {
   if (REDIS_URL && REDIS_TOKEN) return 'redis'
