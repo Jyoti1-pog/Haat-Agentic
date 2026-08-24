@@ -35,12 +35,19 @@ const SESSION   = process.env.HAAT_AGENT_SESSION ?? `mcp-${process.pid}-${Date.n
 const BUYER_REF = process.env.HAAT_BUYER_REF ?? SESSION
 const TIMEOUT   = Number(process.env.HAAT_TIMEOUT_MS ?? 30_000)
 
+// Deployments that enforce keys namespace your session to the key, so two
+// agents cannot collide or spend each other's budget. Open ones ignore it.
+const API_KEY   = process.env.HAAT_API_KEY ?? ''
+
 // ── HTTP ─────────────────────────────────────────────────────────────────────
 async function call(path, { method = 'GET', body } = {}) {
   const ctrl = AbortSignal.timeout(TIMEOUT)
   const res = await fetch(`${HAAT_URL}${path}`, {
     method,
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    headers: {
+      ...(body ? { 'Content-Type': 'application/json' } : {}),
+      ...(API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {}),
+    },
     body: body ? JSON.stringify({ agent_session_id: SESSION, ...body }) : undefined,
     signal: ctrl,
   })
@@ -49,6 +56,11 @@ async function call(path, { method = 'GET', body } = {}) {
 
   // A refusal is a real answer with a reason attached, not a transport failure.
   // Only genuine server faults become errors.
+  if (res.status === 401) {
+    throw new Error(
+      `${json.reason ?? 'Unauthorized'} Set HAAT_API_KEY in this server's env.`,
+    )
+  }
   if (res.status >= 500) {
     throw new Error(json.error ?? `haat returned HTTP ${res.status}`)
   }
@@ -290,6 +302,9 @@ try {
     `[haat-mcp] connected to ${HAAT_URL} — razorpay ${m.payment_provider?.mode}, ` +
     `caps ${m.limits?.per_transaction}/txn · ${m.limits?.per_session}/session`,
   )
+  if (m.auth?.required && !API_KEY) {
+    console.error('[haat-mcp] WARNING: this haat requires an API key. Set HAAT_API_KEY or every call will 401.')
+  }
 } catch (err) {
   console.error(`[haat-mcp] WARNING: cannot reach haat at ${HAAT_URL} (${err.message}). Tools will error until it is up.`)
 }

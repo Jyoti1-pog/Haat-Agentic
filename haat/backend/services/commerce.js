@@ -206,7 +206,11 @@ export async function createOrder({ product_id, buyer_ref, agent_session_id }) {
     razorpay_mode: rzp._simulated ? 'unconfigured' : razorpay.mode(),
     razorpay_payment_id: null,
     payment_method: null,
-    gate_checks: evaluation.checks,
+    // The guardrail trail is not duplicated here. It is written to the audit
+    // log under meta.checks, which is where it belongs and where the ledger
+    // reads it from; a second copy on every order row was half the size of the
+    // state blob that gets read and written on every request.
+    gate_decision: evaluation.decision,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   })
@@ -600,7 +604,7 @@ export async function createHumanOrder({ product_id, buyer_ref }) {
     amount_paise: amount, currency: 'INR', status: 'created',
     razorpay_order_id: rzp.id,
     razorpay_mode: rzp._simulated ? 'unconfigured' : razorpay.mode(),
-    razorpay_payment_id: null, payment_method: null, gate_checks: null,
+    razorpay_payment_id: null, payment_method: null, gate_decision: null,
     created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
   })
 

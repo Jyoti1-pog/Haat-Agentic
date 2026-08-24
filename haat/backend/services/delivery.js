@@ -23,7 +23,10 @@ function signingSecret() {
   if (process.env.DIGITAL_SIGNING_SECRET) return process.env.DIGITAL_SIGNING_SECRET
   if (!ephemeralSecret) {
     ephemeralSecret = crypto.randomBytes(32).toString('hex')
-    console.warn('[delivery] DIGITAL_SIGNING_SECRET not set — download links will not survive a restart')
+    console.warn(
+      '[delivery] DIGITAL_SIGNING_SECRET not set — download links will not survive a restart, ' +
+      'and on a multi-instance host a link signed by one instance will not verify on another.',
+    )
   }
   return ephemeralSecret
 }

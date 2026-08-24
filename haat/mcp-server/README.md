@@ -37,6 +37,7 @@ Claude Desktop, Claude Code, or any MCP host:
 | `HAAT_URL` | `http://localhost:3001` | Which haat to buy from |
 | `HAAT_AGENT_SESSION` | `mcp-<pid>-<ts>` | One session, one spend budget. Give each client its own or they share a wallet. |
 | `HAAT_BUYER_REF` | the session id | Who owns the purchase. Use the person's email and it lands in *their* library. |
+| `HAAT_API_KEY` | — | Required if the deployment enforces keys. Your session is namespaced to it, so no other agent can reach or spend it |
 | `HAAT_TIMEOUT_MS` | `30000` | Per-request timeout |
 
 ## Tools

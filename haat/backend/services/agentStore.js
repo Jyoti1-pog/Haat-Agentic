@@ -1,32 +1,23 @@
 /**
- * agentStore.js — persistence for the agentic-commerce surface
+ * agentStore.js — runtime state for the agentic-commerce surface
  *
- * The rest of haat keeps its catalogue in a flat JSON file and its carts in an
- * in-memory Map. This follows the same grain: one JSON file on disk, held in
- * memory, flushed after writes. That keeps the agent surface additive — no new
- * database dependency, no migration to run before a demo.
+ * Holds orders, entitlements, the audit trail, per-session budgets, burned
+ * licence keys and seller listings. Money is stored as an integer number of
+ * paise everywhere: Razorpay's API is denominated in paise, and integers keep
+ * the spend caps exact — no float drift on a value that gates whether money moves.
  *
- * What it holds
- * ─────────────
- *   orders          — one row per agent-initiated order attempt that got past the gates
- *   entitlements    — what a buyer_ref already owns (drives duplicate-purchase reuse)
- *   actions         — the audit trail; every tool call lands here, allowed or not
- *   sessions        — per-agent-session spend + granted approvals
- *   consumedCodes   — unlock codes popped out of a product's pool
+ * Reads and writes here are synchronous, deliberately. Every caller — the
+ * guardrails, the order path, the ledger — reads state mid-decision, and making
+ * that async would colour the whole codebase for no benefit.
  *
- * Money is stored as an integer number of paise everywhere. Razorpay's API is
- * denominated in paise, and integers keep the spend caps exact — no float drift
- * on a value that gates whether money moves.
+ * Durability is handled around the edges instead: services/storage.js loads the
+ * state before a request runs and writes it after, which is what lets the same
+ * synchronous code work on a serverless host where nothing survives in memory.
+ * See hydrate() and persist() at the bottom.
  */
 
 import crypto from 'crypto'
-import { existsSync, mkdirSync, readFileSync, writeFileSync, renameSync } from 'fs'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const DATA_DIR  = join(__dirname, '../data')
-const STORE_PATH = join(DATA_DIR, 'agent-store.json')
+import * as storage from './storage.js'
 
 const EMPTY = {
   orders: {}, entitlements: [], actions: [], sessions: {},
@@ -34,40 +25,17 @@ const EMPTY = {
   sellerProducts: [], sellerDeliverables: [], sellerAssets: {},
 }
 
-// ── Load ─────────────────────────────────────────────────────────────────────
-function load() {
-  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true })
-  if (!existsSync(STORE_PATH)) return structuredClone(EMPTY)
-  try {
-    return { ...structuredClone(EMPTY), ...JSON.parse(readFileSync(STORE_PATH, 'utf8')) }
-  } catch (err) {
-    console.warn(`[agentStore] could not read ${STORE_PATH} (${err.message}) — starting empty`)
-    return structuredClone(EMPTY)
-  }
-}
+// The live state. Replaced wholesale by hydrate(), mutated in place by everything else.
+let state = structuredClone(EMPTY)
+let dirty = false
 
-const state = load()
+/** Marks the state as needing a write. Called by every mutating function. */
+const touch = () => { dirty = true }
 
-// ── Flush ────────────────────────────────────────────────────────────────────
-// Debounced + written via a temp file so a crash mid-write can't leave a
-// truncated store behind.
-let flushTimer = null
-function flush() {
-  if (flushTimer) return
-  flushTimer = setTimeout(() => {
-    flushTimer = null
-    try {
-      const tmp = `${STORE_PATH}.tmp`
-      writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8')
-      renameSync(tmp, STORE_PATH)
-    } catch (err) {
-      // Render's filesystem is ephemeral and can be read-only in some plans.
-      // The in-memory store still serves the demo, so degrade rather than throw.
-      console.warn(`[agentStore] flush failed: ${err.message}`)
-    }
-  }, 120)
-  flushTimer.unref?.()
-}
+// Written on persist(), not inline: audit rows append, blobs go to their own
+// keys. Both stay out of the hot state that every request reads and rewrites.
+let pendingActions = []
+let pendingBlobs = []
 
 export const newId = (prefix) => `${prefix}_${crypto.randomUUID().replace(/-/g, '').slice(0, 16)}`
 
@@ -80,7 +48,7 @@ export function getSession(agentSessionId) {
       spent_paise:      0,
       approvals:        {},   // product_id → { granted_at, approved_amount_paise }
     }
-    flush()
+    touch()
   }
   return state.sessions[agentSessionId]
 }
@@ -88,14 +56,14 @@ export function getSession(agentSessionId) {
 export function addSessionSpend(agentSessionId, paise) {
   const s = getSession(agentSessionId)
   s.spent_paise += paise
-  flush()
+  touch()
   return s.spent_paise
 }
 
 export function grantApproval(agentSessionId, productId, amountPaise) {
   const s = getSession(agentSessionId)
   s.approvals[productId] = { granted_at: new Date().toISOString(), approved_amount_paise: amountPaise }
-  flush()
+  touch()
   return s.approvals[productId]
 }
 
@@ -110,13 +78,13 @@ export function hasApproval(agentSessionId, productId, amountPaise) {
 export function consumeApproval(agentSessionId, productId) {
   const s = getSession(agentSessionId)
   delete s.approvals[productId]
-  flush()
+  touch()
 }
 
 // ── Orders ───────────────────────────────────────────────────────────────────
 export function createOrderRow(row) {
   state.orders[row.id] = row
-  flush()
+  touch()
   return row
 }
 
@@ -128,7 +96,7 @@ export function updateOrder(orderId, patch) {
   const order = state.orders[orderId]
   if (!order) return null
   Object.assign(order, patch, { updated_at: new Date().toISOString() })
-  flush()
+  touch()
   return order
 }
 
@@ -148,7 +116,7 @@ export function findOpenOrder(agentSessionId, productId) {
 // ── Entitlements ─────────────────────────────────────────────────────────────
 export function createEntitlement(row) {
   state.entitlements.push(row)
-  flush()
+  touch()
   return row
 }
 
@@ -179,7 +147,7 @@ export function consumedCodes(productId) {
 export function consumeCode(productId, code, agentSessionId = null) {
   if (!state.consumedCodes[productId]) state.consumedCodes[productId] = []
   state.consumedCodes[productId].push({ code, agent_session_id: agentSessionId, at: new Date().toISOString() })
-  flush()
+  touch()
   return code
 }
 
@@ -212,15 +180,23 @@ export function logAction({
     meta,
     created_at: new Date().toISOString(),
   }
-  state.actions.push(row)
-  flush()
+  // Buffered rather than written here, so logAction stays synchronous for the
+  // dozens of call sites that use it mid-decision. persist() flushes the buffer
+  // as an append, which no concurrent writer can clobber.
+  pendingActions.push(row)
   return row
 }
 
-export function listActions(agentSessionId, since = 0) {
-  const rows = agentSessionId
-    ? state.actions.filter(a => a.agent_session_id === agentSessionId)
-    : state.actions
+/**
+ * Reads the trail back from append-only storage.
+ *
+ * Async because the log deliberately does not live in the hot state — it is the
+ * one thing here that must grow without bound, and rewriting it on every request
+ * is what made each purchase cost ~5 KB of blob churn.
+ */
+export async function listActions(agentSessionId, since = 0) {
+  const all = [...(await storage.readActions()), ...pendingActions]
+  const rows = agentSessionId ? all.filter(a => a.agent_session_id === agentSessionId) : all
   return rows.slice(since)
 }
 
@@ -238,21 +214,33 @@ export function listOrders(agentSessionId) {
 export function createSellerProduct(product, deliverable) {
   state.sellerProducts.push(product)
   if (deliverable) state.sellerDeliverables.push(deliverable)
-  flush()
+  touch()
   return product
 }
 
 export const listSellerProducts     = () => state.sellerProducts
 export const listSellerDeliverables = () => state.sellerDeliverables
 
-/** Uploaded deliverable bytes, kept base64 so they survive a store reload. */
+/**
+ * Uploaded deliverable bytes.
+ *
+ * Only the metadata lands in the hot state; the bytes go to their own key and
+ * are fetched when the file is actually served. Keeping them inline made a 2 MB
+ * upload into 98% of a blob that is read and written on every single request.
+ */
 export function putSellerAsset(id, { filename, mimetype, base64 }) {
-  state.sellerAssets[id] = { filename, mimetype, base64, created_at: new Date().toISOString() }
-  flush()
+  state.sellerAssets[id] = { filename, mimetype, size: base64.length, created_at: new Date().toISOString() }
+  pendingBlobs.push([id, { filename, mimetype, base64 }])
+  touch()
   return id
 }
 
-export const getSellerAsset = id => state.sellerAssets[id] ?? null
+export async function getSellerAsset(id) {
+  const meta = state.sellerAssets[id]
+  if (!meta) return null
+  const blob = await storage.getBlob(id)
+  return blob ? { ...meta, ...blob } : null
+}
 
 // ── Agent conversation ───────────────────────────────────────────────────────
 // Kept per session so that a run interrupted by an approval gate resumes the
@@ -263,7 +251,7 @@ export function getConversation(agentSessionId) {
 
 export function saveConversation(agentSessionId, messages) {
   state.conversations[agentSessionId] = messages
-  flush()
+  touch()
 }
 
 /**
@@ -274,19 +262,69 @@ export function saveConversation(agentSessionId, messages) {
 export function resetSession(agentSessionId) {
   delete state.sessions[agentSessionId]
   delete state.conversations[agentSessionId]
-  state.actions = state.actions.filter(a => a.agent_session_id !== agentSessionId)
+  pendingActions = pendingActions.filter(a => a.agent_session_id !== agentSessionId)
+  pendingClears.push(a => a.agent_session_id === agentSessionId)
   for (const [id, o] of Object.entries(state.orders)) {
     if (o.agent_session_id === agentSessionId) delete state.orders[id]
   }
   state.entitlements = state.entitlements.filter(e => e.agent_session_id !== agentSessionId)
   releaseCodes(agentSessionId)
-  flush()
+  touch()
 }
 
 /** Full clean slate across every session — for setting up before a demo. */
 export function resetAll() {
-  Object.assign(state, structuredClone(EMPTY))
-  flush()
+  state = structuredClone(EMPTY)
+  pendingActions = []
+  pendingBlobs = []
+  pendingClears.push(() => true)
+  touch()
 }
 
+// Audit rows live outside the hot state, so clearing them is its own step,
+// deferred to persist() like every other write.
+let pendingClears = []
+
+// ── Durability ───────────────────────────────────────────────────────────────
+/**
+ * Pulls the stored state in before a request is handled.
+ *
+ * On a long-lived server this matters once, at boot. On a serverless host it
+ * matters on every invocation, because the process handling confirm_payment is
+ * not the one that handled create_order and starts with nothing.
+ */
+export async function hydrate() {
+  try {
+    const stored = await storage.load()
+    if (stored) state = { ...structuredClone(EMPTY), ...stored }
+    dirty = false
+  } catch (err) {
+    // Losing a read is bad, but serving a stale-but-working store beats a 500.
+    console.warn(`[agentStore] hydrate failed (${err.message}) — continuing with in-memory state`)
+  }
+}
+
+/** Writes the state back, but only if something actually changed. */
+export async function persist() {
+  const actions = pendingActions
+  const blobs = pendingBlobs
+  pendingActions = []
+  pendingBlobs = []
+
+  try {
+    // Appends first: an audit row for something that happened must survive even
+    // if the state write below fails.
+    if (actions.length) await storage.appendActions(actions)
+    for (const predicate of pendingClears.splice(0)) await storage.clearActions(predicate)
+    for (const [id, blob] of blobs) await storage.putBlob(id, blob)
+    if (dirty) {
+      await storage.save(state)
+      dirty = false
+    }
+  } catch (err) {
+    console.warn(`[agentStore] persist failed: ${err.message}`)
+  }
+}
+
+export const isDirty = () => dirty
 export default state

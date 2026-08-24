@@ -24,12 +24,16 @@ import {
   search, DIGITAL_ASSET_DIR,
 } from '../services/digitalCatalog.js'
 import { runAgent } from '../services/agentPlanner.js'
+import { agentAuth, scopedSession, isEnforced, describe as describeAuth } from '../middleware/agentAuth.js'
 import * as llm from '../services/llm.js'
 
 const router = Router()
 
+// The client proposes a session name; the server decides which namespace it
+// lands in. Two agents holding different keys cannot collide, or reach each
+// other's budget, even if they both ask for the same name.
 const sessionOf = req =>
-  req.body?.agent_session_id ?? req.query?.agent_session_id ?? req.params?.sessionId ?? 'anon'
+  scopedSession(req, req.body?.agent_session_id ?? req.query?.agent_session_id ?? req.params?.sessionId ?? 'anon')
 
 // Service functions never throw across the boundary, but Razorpay or the
 // filesystem can; this keeps one 500 from taking the demo page down.
@@ -46,6 +50,13 @@ router.get('/manifest', (_req, res) => {
     currency: 'INR',
     payment_provider: { name: 'razorpay', mode: razorpay.mode() },
     ai_buyer: { configured: llm.isConfigured(), model: llm.describe() },
+    auth: {
+      required: isEnforced(),
+      scheme: 'Authorization: Bearer <key>',
+      note: isEnforced()
+        ? 'An API key is required, and your session is namespaced to it.'
+        : 'This deployment is open — no key needed.',
+    },
     limits: {
       per_transaction: fmtBoth(LIMITS.perTransactionPaise),
       per_session: fmtBoth(LIMITS.perSessionPaise),
@@ -65,6 +76,12 @@ router.get('/manifest', (_req, res) => {
     audit: { path: '/api/agent-commerce/ledger/:sessionId', note: 'Every call above is recorded here, refusals included.' },
   })
 })
+
+// ══ Everything below needs a caller identity ════════════════════════════════
+// The manifest above deliberately does not: an agent arriving cold must be able
+// to read that a key is required before it can know to send one, and the MCP
+// server reads it at startup precisely to warn about a missing key.
+router.use(agentAuth)
 
 // ══ Tools ════════════════════════════════════════════════════════════════════
 router.post('/search', wrap(async (req, res) => {
@@ -120,21 +137,22 @@ router.post('/approvals', wrap(async (req, res) => {
 }))
 
 router.get('/budget/:sessionId', wrap(async (req, res) => {
-  res.json(await commerce.getBudget({ agent_session_id: req.params.sessionId }))
+  res.json(await commerce.getBudget({ agent_session_id: sessionOf(req) }))
 }))
 
 // ══ Audit trail ══════════════════════════════════════════════════════════════
 // `since` lets the demo page poll for only what it hasn't rendered yet, so the
 // ledger streams instead of redrawing.
-router.get('/ledger/:sessionId', (req, res) => {
+router.get('/ledger/:sessionId', wrap(async (req, res) => {
   const since = Number(req.query.since ?? 0) || 0
-  const actions = store.listActions(req.params.sessionId, since)
+  const session = sessionOf(req)
+  const actions = await store.listActions(session, since)
 
   res.json({
     session_id: req.params.sessionId,
     cursor: since + actions.length,
-    budget: commerce.budgetSnapshot(req.params.sessionId),
-    orders: store.listOrders(req.params.sessionId).map(o => ({
+    budget: commerce.budgetSnapshot(session),
+    orders: store.listOrders(session).map(o => ({
       order_id: o.id,
       product_id: o.product_id,
       product_name: o.product_name,
@@ -153,7 +171,7 @@ router.get('/ledger/:sessionId', (req, res) => {
       amount: a.amount_paise == null ? null : fmtBoth(a.amount_paise),
     })),
   })
-})
+}))
 
 // ══ Platform activity ════════════════════════════════════════════════════════
 /**
@@ -162,9 +180,9 @@ router.get('/ledger/:sessionId', (req, res) => {
  * makes "show the audit trail" a property of the system rather than of one
  * demo page.
  */
-router.get('/activity', (req, res) => {
+router.get('/activity', wrap(async (req, res) => {
   const limit = Math.min(Number(req.query.limit ?? 60) || 60, 300)
-  const all = store.listActions()
+  const all = await store.listActions()
 
   const sessions = new Map()
   for (const a of all) {
@@ -204,10 +222,10 @@ router.get('/activity', (req, res) => {
       amount: a.amount_paise == null ? null : fmtBoth(a.amount_paise),
     })),
   })
-})
+}))
 
 router.post('/reset/:sessionId', (req, res) => {
-  store.resetSession(req.params.sessionId)
+  store.resetSession(sessionOf(req))
   res.json({ ok: true, session_id: req.params.sessionId, note: 'orders, entitlements and audit rows cleared; unlock codes returned to the pool' })
 })
 
@@ -363,7 +381,7 @@ digitalRouter.get('/covers/:file', (req, res) => {
 })
 
 /** The deliverable. Reachable only with an unexpired signature. */
-digitalRouter.get('/download/:entitlementId', (req, res) => {
+digitalRouter.get('/download/:entitlementId', wrap(async (req, res) => {
   const { entitlementId } = req.params
   const check = verifySignedUrl(entitlementId, req.query.exp, req.query.sig)
   if (!check.valid) {
@@ -386,7 +404,7 @@ digitalRouter.get('/download/:entitlementId', (req, res) => {
 
   // A seller-uploaded deliverable lives in the store; a seeded one on disk.
   if (ent.asset_id) {
-    const asset = store.getSellerAsset(ent.asset_id)
+    const asset = await store.getSellerAsset(ent.asset_id)
     if (!asset) return res.status(404).json({ error: 'Asset missing from storage' })
     res.set('Content-Disposition', `attachment; filename="${asset.filename}"`)
     res.type(asset.mimetype || 'application/octet-stream')
@@ -402,15 +420,15 @@ digitalRouter.get('/download/:entitlementId', (req, res) => {
   res.set('Content-Disposition', `attachment; filename="${ent.filename ?? safe}"`)
   res.type('image/svg+xml')
   createReadStream(path).pipe(res)
-})
+}))
 
 /** Seller-uploaded cover art. Public — a listing image, not the deliverable. */
-digitalRouter.get('/asset/:assetId', (req, res) => {
-  const asset = store.getSellerAsset(req.params.assetId)
+digitalRouter.get('/asset/:assetId', wrap(async (req, res) => {
+  const asset = await store.getSellerAsset(req.params.assetId)
   if (!asset) return res.status(404).json({ error: 'Not found' })
   res.type(asset.mimetype || 'application/octet-stream')
   res.set('Cache-Control', 'public, max-age=86400')
   res.send(Buffer.from(asset.base64, 'base64'))
-})
+}))
 
 export default router

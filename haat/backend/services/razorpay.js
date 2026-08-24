@@ -45,9 +45,20 @@ export function isConfigured() {
 let standInSecret = null
 function agentPathSecret() {
   if (keySecret()) return keySecret()
+
+  // Derived from a configured secret, never random. A per-process value works
+  // on one long-lived server and fails everywhere else: the instance that signs
+  // a payment is not always the instance that verifies it, and on a serverless
+  // host it almost never is. Random here means every payment fails in prod.
+  const base = process.env.DIGITAL_SIGNING_SECRET
+  if (base) return crypto.createHmac('sha256', base).update('razorpay-standin').digest('hex')
+
   if (!standInSecret) {
     standInSecret = crypto.randomBytes(32).toString('hex')
-    console.warn('[razorpay] no keys configured — agent-path signatures use a per-process stand-in secret')
+    console.warn(
+      '[razorpay] no Razorpay keys and no DIGITAL_SIGNING_SECRET — using a per-process ' +
+      'stand-in secret. Payments will fail across processes; set DIGITAL_SIGNING_SECRET.',
+    )
   }
   return standInSecret
 }

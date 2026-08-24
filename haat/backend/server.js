@@ -13,6 +13,10 @@ import chatRouter   from './routes/chat.js'
 import authRouter   from './routes/auth.js'
 import agentCommerceRouter, { digitalRouter, shopRouter } from './routes/agentCommerce.js'
 import sellerProductsRouter from './routes/sellerProducts.js'
+import * as store from './services/agentStore.js'
+import * as storage from './services/storage.js'
+import * as llm from './services/llm.js'
+import { describe as describeAuth } from './middleware/agentAuth.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -37,6 +41,49 @@ app.use(express.json({
   verify: (req, _res, buf) => { req.rawBody = buf },
 }))
 
+// ── State ──────────────────────────────────────────────────────────────────
+// Load the store before the handler runs, write it back after the response is
+// sent. On a long-lived server this is a no-op after boot; on serverless it is
+// the only reason a three-request purchase can complete at all, because the
+// instance handling confirm_payment never saw create_order.
+app.use(async (req, res, next) => {
+  if (!req.path.startsWith('/api')) return next()
+
+  // Reads need current state but change nothing, so they never queue.
+  if (req.method === 'GET' || req.method === 'OPTIONS') {
+    await store.hydrate()
+    return next()
+  }
+
+  // Writes hold a lock across the whole cycle — hydrate, handle, persist.
+  // Without it two instances both read the same state, both mutate their own
+  // copy, and the second write erases the first. Measured: eight concurrent
+  // purchases across two instances landed as five.
+  let release
+  try {
+    release = await storage.acquireLock()
+  } catch (err) {
+    // Busy rather than broken: a 503 with Retry-After is something an agent
+    // client knows how to handle, and it keeps the audit trail honest.
+    res.set('Retry-After', '1')
+    return res.status(503).json({ status: 'busy', reason: err.message, retryable: true })
+  }
+  let released = false
+  const finish = async () => {
+    if (released) return
+    released = true
+    try { await store.persist() } catch { /* logged in persist */ }
+    finally { await release() }
+  }
+
+  // 'finish' covers a normal response; 'close' covers a client that hangs up.
+  res.on('finish', finish)
+  res.on('close', finish)
+
+  await store.hydrate()
+  next()
+})
+
 // ── Routes ─────────────────────────────────────────────────────────────────
 app.use('/api',         searchRouter)   // POST /api/search  +  GET /api/products/:id
 app.use('/api/voice',   voiceRouter)    // /api/voice/transcribe | /speak | /voices
@@ -52,8 +99,16 @@ app.use('/api/shop',           shopRouter)          // human checkout: orders, p
 app.use('/api/seller',         sellerProductsRouter) // seller product listing
 
 // ── Health ─────────────────────────────────────────────────────────────────
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString(), service: 'haat-backend' })
+app.get('/api/health', async (_req, res) => {
+  const store_ = await storage.ping()
+  res.status(store_.ok ? 200 : 503).json({
+    ok: store_.ok,
+    service: 'haat-backend',
+    timestamp: new Date().toISOString(),
+    store: store_,
+    ai_buyer: llm.describe(),
+    agent_auth: describeAuth(),
+  })
 })
 
 // ── Global error handler ───────────────────────────────────────────────────
@@ -63,8 +118,19 @@ app.use((err, _req, res, _next) => {
 })
 
 // ── Start ──────────────────────────────────────────────────────────────────
-const PORT = process.env.PORT ?? 3001
-app.listen(PORT, () => {
-  console.log(`\n🚀  haat backend running at http://localhost:${PORT}`)
-  console.log(`    Health: http://localhost:${PORT}/api/health\n`)
-})
+// Under Vercel the platform invokes the exported app; there is nothing to listen
+// on, and calling listen() would be wrong. Locally we bind a port as usual.
+storage.warnIfMisconfigured()
+
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT ?? 3001
+  await store.hydrate()
+  app.listen(PORT, () => {
+    console.log(`\n  haat backend running at http://localhost:${PORT}`)
+    console.log(`    store:    ${storage.describe()}`)
+    console.log(`    ai buyer: ${llm.describe()}`)
+    console.log(`    health:   http://localhost:${PORT}/api/health\n`)
+  })
+}
+
+export default app
