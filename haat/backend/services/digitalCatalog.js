@@ -19,7 +19,24 @@ import { dirname, join } from 'path'
 import { consumedCodes, listSellerProducts, listSellerDeliverables } from './agentStore.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const read = name => JSON.parse(readFileSync(join(__dirname, '../data', name), 'utf8'))
+/**
+ * Seed data is read at module load. Vercel's bundler traces imports, not runtime
+ * file paths, so these files only exist in the deployed function because
+ * vercel.json force-includes backend/data/** — without that this throws on the
+ * first invocation and every request 500s. Say which file is missing, so that is
+ * a two-second diagnosis rather than a bare ENOENT.
+ */
+const read = name => {
+  const path = join(__dirname, '../data', name)
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'))
+  } catch (err) {
+    throw new Error(
+      `Catalogue file "${name}" could not be read (${err.code ?? err.message}). ` +
+      `On Vercel this means vercel.json is missing includeFiles for backend/data/**.`,
+    )
+  }
+}
 
 const SEED_PRODUCTS     = read('digital-products.json')
 const SELLERS           = read('sellers.json')
