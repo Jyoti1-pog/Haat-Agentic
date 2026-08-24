@@ -115,6 +115,26 @@ export default function DocsPage() {
   const sessCap = manifest?.limits?.per_session ?? '…'
   const needsKey = manifest?.auth?.required
 
+  // A token of your own, so your spend budget is yours. Kept in localStorage so
+  // the URL on this page is the same one you connected last time — a fresh token
+  // every reload would silently hand you a new, empty budget.
+  const token = useMemo(() => {
+    const KEY = 'haat.connector.token'
+    try {
+      const existing = localStorage.getItem(KEY)
+      if (existing) return existing
+      const minted = Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4)
+      localStorage.setItem(KEY, minted)
+      return minted
+    } catch {
+      // Private windows and blocked site data both land here. A usable URL
+      // still beats no URL; it just shares the default budget.
+      return ''
+    }
+  }, [])
+
+  const connectorUrl = token ? `${origin}/mcp/s/${token}` : `${origin}/mcp`
+
   const mcpConfig = useMemo(() => JSON.stringify({
     mcpServers: {
       haat: {
@@ -213,7 +233,29 @@ export default function DocsPage() {
 
           {/* ══ Agents ════════════════════════════════════════════════ */}
           <Section id="agents" title="Connecting an agent"
-            lead="haat publishes an MCP server. Point Claude Desktop, Claude Code, or any MCP host at this deployment and it can transact here.">
+            lead="haat speaks MCP over two transports. Which one you want depends entirely on whether your AI runs on your machine or someone else's.">
+
+            <p className="h-eyebrow" style={{ marginBottom: 10 }}>Hosted AI · a connector URL</p>
+            <p className="h-body h-muted" style={{ fontSize: 14, marginBottom: 14, maxWidth: '62ch' }}>
+              Claude and ChatGPT run in a datacentre, not on your laptop. They cannot start a
+              local process, so a config with <code style={{ color: 'var(--parchment)' }}>npx</code> in
+              it will never work there no matter how it is pasted — they connect to a URL and speak
+              MCP over HTTP. This is that URL:
+            </p>
+            <Code>{connectorUrl}</Code>
+            <p className="h-body h-muted" style={{ fontSize: 14, margin: '14px 0 18px', maxWidth: '62ch' }}>
+              In Claude: <strong style={{ color: 'var(--parchment)', fontWeight: 400 }}>Settings → Connectors
+              → Add custom connector</strong>, and paste it. In ChatGPT it goes under developer-mode
+              connectors. No install, no keys, no account. The token on the end is what makes the
+              budget yours — everyone arriving at a bare <code style={{ color: 'var(--parchment)' }}>/mcp</code> shares
+              one instead.
+            </p>
+
+            <p className="h-eyebrow" style={{ margin: '30px 0 10px' }}>Local AI · stdio</p>
+            <p className="h-body h-muted" style={{ fontSize: 14, marginBottom: 14, maxWidth: '62ch' }}>
+              Claude Desktop, Claude Code and other hosts that run on your own machine <em>can</em> spawn
+              a process, and this is the config for them:
+            </p>
             <Code>{mcpConfig}</Code>
             <p className="h-body h-muted" style={{ fontSize: 14, marginBottom: 16, maxWidth: '62ch' }}>
               Two settings decide whether several agents can coexist:
