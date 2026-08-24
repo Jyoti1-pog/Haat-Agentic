@@ -13,6 +13,7 @@ import chatRouter   from './routes/chat.js'
 import authRouter   from './routes/auth.js'
 import agentCommerceRouter, { digitalRouter, shopRouter } from './routes/agentCommerce.js'
 import sellerProductsRouter from './routes/sellerProducts.js'
+import mcpRouter from './routes/mcp.js'
 import * as store from './services/agentStore.js'
 import * as storage from './services/storage.js'
 import * as llm from './services/llm.js'
@@ -32,7 +33,13 @@ const ALLOWED_ORIGINS = [
 // own frontend can call is not something a third-party AI buyer can transact
 // against. It carries no cookies and no session auth, so there is nothing for a
 // cross-origin caller to ride on.
-app.use(['/api/agent-commerce', '/api/digital', '/api/seller', '/api/shop'], cors({ origin: '*' }))
+app.use(['/api/agent-commerce', '/api/digital', '/api/seller', '/api/shop', '/mcp'], cors({
+  origin: '*',
+  // The MCP transport sends these; a preflight that omits them fails in any
+  // browser-based MCP client, and the failure looks like the server is down.
+  allowedHeaders: ['Content-Type', 'Authorization', 'Mcp-Session-Id', 'MCP-Protocol-Version', 'Last-Event-ID'],
+  exposedHeaders: ['Mcp-Session-Id', 'MCP-Protocol-Version'],
+}))
 app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }))
 
 // `verify` keeps the raw bytes around for the Razorpay webhook, whose signature
@@ -124,6 +131,12 @@ app.use('/api/agent-commerce', agentCommerceRouter) // tools, ledger, webhook, a
 app.use('/api/digital',        digitalRouter)       // storefront listing, covers, signed downloads
 app.use('/api/shop',           shopRouter)          // human checkout: orders, payment, library
 app.use('/api/seller',         sellerProductsRouter) // seller product listing
+
+// Remote MCP. Deliberately not under /api: the lock middleware keys off that
+// prefix and every MCP request is a POST, so mounting it there would hold the
+// write lock for the length of a search. Tool calls re-enter through /api and
+// take the lock there, for the operations that genuinely write.
+app.use('/mcp', mcpRouter)
 
 // ── Health ─────────────────────────────────────────────────────────────────
 app.get('/api/health', async (_req, res) => {

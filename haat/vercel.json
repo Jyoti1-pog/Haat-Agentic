@@ -12,6 +12,14 @@
   },
   "rewrites": [
     {
+      "source": "/mcp",
+      "destination": "/api/index.mjs"
+    },
+    {
+      "source": "/mcp/(.*)",
+      "destination": "/api/index.mjs"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/index.mjs"
     },
@@ -35,6 +43,27 @@
         {
           "key": "Access-Control-Allow-Headers",
           "value": "Content-Type"
+        }
+      ]
+    },
+    {
+      "source": "/mcp(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,POST,DELETE,OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, Mcp-Session-Id, MCP-Protocol-Version, Last-Event-ID"
+        },
+        {
+          "key": "Access-Control-Expose-Headers",
+          "value": "Mcp-Session-Id, MCP-Protocol-Version"
         }
       ]
     }
