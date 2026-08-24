@@ -42,7 +42,29 @@ const TIMEOUT   = Number(process.env.HAAT_TIMEOUT_MS ?? 30_000)
 const API_KEY   = process.env.HAAT_API_KEY?.trim() ?? ''
 
 // ── HTTP ─────────────────────────────────────────────────────────────────────
-async function call(path, { method = 'GET', body } = {}) {
+/**
+ * haat serialises writes, so a burst of agents can briefly collide and get a
+ * retryable 503. That is a transport concern, not something a language model
+ * should have to reason about — so it is retried here, with backoff and jitter,
+ * and the agent simply sees the call take slightly longer.
+ */
+const RETRY_ON = new Set([429, 502, 503, 504])
+const MAX_RETRIES = Number(process.env.HAAT_MAX_RETRIES ?? 4)
+
+async function call(path, opts = {}) {
+  let wait = 220
+  for (let attempt = 0; ; attempt++) {
+    const res = await attempt_(path, opts)
+    if (!RETRY_ON.has(res.__status) || attempt >= MAX_RETRIES) {
+      delete res.__status
+      return res
+    }
+    await new Promise(r => setTimeout(r, wait + Math.random() * wait))
+    wait = Math.min(wait * 2, 2000)
+  }
+}
+
+async function attempt_(path, { method = 'GET', body } = {}) {
   const ctrl = AbortSignal.timeout(TIMEOUT)
   const res = await fetch(`${HAAT_URL}${path}`, {
     method,
@@ -63,10 +85,11 @@ async function call(path, { method = 'GET', body } = {}) {
       `${json.reason ?? 'Unauthorized'} Set HAAT_API_KEY in this server's env.`,
     )
   }
-  if (res.status >= 500) {
+  if (res.status >= 500 && !RETRY_ON.has(res.status)) {
     throw new Error(json.error ?? `haat returned HTTP ${res.status}`)
   }
-  return absolutise(json)
+  // Status rides along so the retry loop can see it, then is stripped.
+  return Object.assign(absolutise(json), { __status: res.status })
 }
 
 /**

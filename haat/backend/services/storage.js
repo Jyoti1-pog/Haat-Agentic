@@ -143,7 +143,10 @@ export async function ping() {
  */
 const LOCK_KEY = `${KEY}:lock`
 const LOCK_TTL_MS = Number(process.env.HAAT_LOCK_TTL_MS ?? 10_000)
-const LOCK_WAIT_MS = Number(process.env.HAAT_LOCK_WAIT_MS ?? 8_000)
+// Tuned for a network store. Each write cycle is a few Upstash round trips, and
+// writes queue, so a burst of agents needs room to drain before anyone is
+// refused. Callers that do get refused see a retryable 503.
+const LOCK_WAIT_MS = Number(process.env.HAAT_LOCK_WAIT_MS ?? 20_000)
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 const token = () => `${process.pid}-${Math.random().toString(36).slice(2)}`

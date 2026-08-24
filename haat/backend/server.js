@@ -72,8 +72,14 @@ app.use(async (req, res, next) => {
   const flush = async () => {
     if (flushed) return
     flushed = true
-    try { await store.persist() } catch { /* logged in persist */ }
+    // The lock covers only the shared-state write. Audit rows and blobs append
+    // to their own keys, where a concurrent writer cannot clobber them, so they
+    // are flushed after the lock is released — over a network store that was
+    // most of the hold time, and every millisecond held is time another agent
+    // spends queued.
+    try { await store.persistState() } catch { /* logged in persist */ }
     finally { await release() }
+    try { await store.persistAppends() } catch { /* logged in persist */ }
   }
 
   // Persist BEFORE the response goes out, not after.

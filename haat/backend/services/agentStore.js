@@ -305,25 +305,48 @@ export async function hydrate() {
 }
 
 /** Writes the state back, but only if something actually changed. */
-export async function persist() {
+/**
+ * The part that must happen inside the write lock: the read-modify-write of the
+ * shared state document. Kept as small as possible, because every millisecond
+ * here is time every other agent spends queued behind it.
+ */
+export async function persistState() {
+  if (!dirty) return
+  try {
+    await storage.save(state)
+    dirty = false
+  } catch (err) {
+    console.warn(`[agentStore] state persist failed: ${err.message}`)
+  }
+}
+
+/**
+ * The part that does not need the lock, and so runs after it is released.
+ *
+ * Audit rows append and blobs go to their own keys — neither can be clobbered by
+ * a concurrent writer, so holding the lock across them only made other agents
+ * wait. Over a network store that was most of the hold time.
+ */
+export async function persistAppends() {
   const actions = pendingActions
   const blobs = pendingBlobs
+  const clears = pendingClears.splice(0)
   pendingActions = []
   pendingBlobs = []
 
   try {
-    // Appends first: an audit row for something that happened must survive even
-    // if the state write below fails.
     if (actions.length) await storage.appendActions(actions)
-    for (const predicate of pendingClears.splice(0)) await storage.clearActions(predicate)
+    for (const predicate of clears) await storage.clearActions(predicate)
     for (const [id, blob] of blobs) await storage.putBlob(id, blob)
-    if (dirty) {
-      await storage.save(state)
-      dirty = false
-    }
   } catch (err) {
-    console.warn(`[agentStore] persist failed: ${err.message}`)
+    console.warn(`[agentStore] append persist failed: ${err.message}`)
   }
+}
+
+/** Both halves, for callers that are not inside the request lifecycle. */
+export async function persist() {
+  await persistState()
+  await persistAppends()
 }
 
 export const isDirty = () => dirty
