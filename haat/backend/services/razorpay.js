@@ -55,11 +55,15 @@ export function credentialCheck() {
   if (!id) problems.push('RAZORPAY_KEY_ID is not set')
   if (!secret) problems.push('RAZORPAY_KEY_SECRET is not set')
 
-  if (id.includes('*') || secret.includes('*')) {
+  // Name which half is masked. "One of your credentials is wrong" sends someone
+  // to re-check both; "the secret is asterisks" is a fix.
+  const masked = [id.includes('*') && 'RAZORPAY_KEY_ID', secret.includes('*') && 'RAZORPAY_KEY_SECRET'].filter(Boolean)
+  if (masked.length) {
     problems.push(
-      'contains "*" — that is the masked placeholder the dashboard shows for a key ' +
-      'already generated, not the key. Razorpay reveals a secret once, at generation. ' +
-      'Click Regenerate and copy both values from that dialog.',
+      `${masked.join(' and ')} ${masked.length > 1 ? 'contain' : 'contains'} "*" — that is the ` +
+      'masked placeholder the dashboard shows for a key that was already generated, not the ' +
+      'value itself. Razorpay reveals a secret once, at generation. Open Account & Settings → ' +
+      'API Keys in Test Mode, click Regenerate, and copy both values from the dialog it shows.',
     )
   }
   if (id && !/^rzp_(test|live)_/.test(id)) {
