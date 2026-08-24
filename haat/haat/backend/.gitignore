@@ -1,7 +1,0 @@
-node_modules/
-.env
-*.log
-data/*.db
-data/*.db-wal
-data/*.db-shm
-data/users.json
