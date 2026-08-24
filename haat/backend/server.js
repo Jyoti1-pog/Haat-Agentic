@@ -42,10 +42,10 @@ app.use(express.json({
 }))
 
 // ── State ──────────────────────────────────────────────────────────────────
-// Load the store before the handler runs, write it back after the response is
-// sent. On a long-lived server this is a no-op after boot; on serverless it is
-// the only reason a three-request purchase can complete at all, because the
-// instance handling confirm_payment never saw create_order.
+// Load the store before the handler runs and write it back before the response
+// leaves. On a long-lived server the load is a no-op after boot; on serverless
+// it is the only reason a three-request purchase can complete at all, because
+// the instance handling confirm_payment never saw create_order.
 app.use(async (req, res, next) => {
   if (!req.path.startsWith('/api')) return next()
 
@@ -68,17 +68,37 @@ app.use(async (req, res, next) => {
     res.set('Retry-After', '1')
     return res.status(503).json({ status: 'busy', reason: err.message, retryable: true })
   }
-  let released = false
-  const finish = async () => {
-    if (released) return
-    released = true
+  let flushed = false
+  const flush = async () => {
+    if (flushed) return
+    flushed = true
     try { await store.persist() } catch { /* logged in persist */ }
     finally { await release() }
   }
 
-  // 'finish' covers a normal response; 'close' covers a client that hangs up.
-  res.on('finish', finish)
-  res.on('close', finish)
+  // Persist BEFORE the response goes out, not after.
+  //
+  // Writing on 'finish' means the client is told "delivered" while the write is
+  // still in flight — so an agent that buys something and immediately asks for
+  // its budget reads the state from before its own purchase. That is invisible
+  // locally, where the write lands in microseconds, and reproducible against a
+  // real deployment where the store is a network hop away. It was caught by the
+  // guardrail suite run against production: a budget check returned the value
+  // from one purchase earlier.
+  //
+  // Durable-then-acknowledged is also just the correct order: nothing should be
+  // reported as done before it is stored.
+  for (const method of ['json', 'send']) {
+    const original = res[method].bind(res)
+    res[method] = body => {
+      flush().finally(() => original(body))
+      return res
+    }
+  }
+
+  // Safety net: a handler that streams, redirects, or dies without calling
+  // json/send still has to release the lock.
+  res.on('close', () => { flush().catch(() => {}) })
 
   await store.hydrate()
   next()
