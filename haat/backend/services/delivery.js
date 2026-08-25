@@ -43,7 +43,7 @@ const sign = (entitlementId, expMs) =>
  * reject. Validated too: a malformed origin should fail loudly here rather than
  * silently emit links nobody can open.
  */
-function publicOrigin() {
+export function publicOrigin() {
   const raw = process.env.PUBLIC_BASE_URL?.trim()
   if (!raw) return ''
   const cleaned = raw.replace(/\/+$/, '')

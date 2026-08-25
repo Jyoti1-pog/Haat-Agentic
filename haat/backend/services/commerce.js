@@ -22,7 +22,7 @@ import {
 import { evaluate, budgetSnapshot, fmtBoth, LIMITS } from './guardrails.js'
 import * as store from './agentStore.js'
 import * as razorpay from './razorpay.js'
-import { fulfil, presentEntitlement } from './delivery.js'
+import { fulfil, presentEntitlement, publicOrigin } from './delivery.js'
 
 const paise = inr => Math.round(inr * 100)
 
@@ -137,16 +137,26 @@ export async function createOrder({ product_id, buyer_ref, agent_session_id }) {
       amount_paise: amount, decision: 'pending_approval', reason: evaluation.reason,
       meta: { checks: evaluation.checks },
     })
+    const origin = publicOrigin()
+    const approvalPath =
+      `/approve?session=${encodeURIComponent(agent_session_id)}&product=${encodeURIComponent(product.id)}`
+
     return {
       status: 'pending_approval',
       reason: evaluation.reason,
       checks: evaluation.checks,
       product: toAgentSummary(product),
       budget: budgetSnapshot(agent_session_id),
+      // Somewhere for the human to actually go. Without this the gate is a dead
+      // end for an agent connected over MCP: it is told to get approval, has no
+      // tool to grant it (by design), and the person it is asking has no way to
+      // give it either. The link approves this one product at this one price.
+      approval_url: origin ? origin + approvalPath : approvalPath,
       guidance:
-        `No order was created and no money moved. Explain the cost to the person you are ` +
-        `buying for and ask them directly. If they agree, they grant approval for this exact ` +
-        `item at this exact price (confirm_purchase_approval), and only then can create_order run again.`,
+        `No order was created and no money moved. Tell the person what you want to buy, what ` +
+        `it costs, and the reason above — then give them the approval_url and stop. Opening it ` +
+        `approves this exact item at this exact price. You cannot approve it yourself and have ` +
+        `no tool to do so. Once they have approved, call create_order again.`,
     }
   }
 

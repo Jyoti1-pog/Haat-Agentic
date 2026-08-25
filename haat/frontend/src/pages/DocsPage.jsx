@@ -248,7 +248,13 @@ export default function DocsPage() {
               → Add custom connector</strong>, and paste it. In ChatGPT it goes under developer-mode
               connectors. No install, no keys, no account. The token on the end is what makes the
               budget yours — everyone arriving at a bare <code style={{ color: 'var(--parchment)' }}>/mcp</code> shares
-              one instead.
+              one instead, so put any word you like there.
+            </p>
+            <p className="h-body" style={{ fontSize: 14, margin: '0 0 18px', maxWidth: '62ch', paddingLeft: 16, borderLeft: '2px solid var(--brass)' }}>
+              It has to go in <strong style={{ color: 'var(--parchment)', fontWeight: 400 }}>Settings</strong>.
+              Pasting the URL — or a config block — into a chat message will not connect anything:
+              an assistant cannot add a connector to itself mid-conversation, and will tell you so.
+              That is the setting being in the wrong place, not the server being unreachable.
             </p>
 
             <p className="h-eyebrow" style={{ margin: '30px 0 10px' }}>Local AI · stdio</p>

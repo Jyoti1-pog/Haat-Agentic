@@ -23,8 +23,14 @@ import { getSession, hasApproval } from './agentStore.js'
 // priciest SKU, or the gate is unreachable — an item too expensive to approve
 // gets blocked by the session budget first and the approval step never runs.
 export const LIMITS = {
-  perTransactionPaise: Number(process.env.AGENT_TXN_CAP_PAISE ?? 200_000),     // ₹2,000
-  perSessionPaise:     Number(process.env.AGENT_SESSION_CAP_PAISE ?? 700_000), // ₹7,000
+  // A per-item cap below the price of ordinary stock turns the approval gate
+  // into a toll on every purchase, which is not what a spend cap is for. ₹5,000
+  // clears the whole catalogue, so what bounds an agent is its session budget —
+  // the total it may spend — with the per-item cap left to catch a single
+  // purchase far outside the norm. Lower AGENT_TXN_CAP_PAISE to demonstrate the
+  // gate on one item.
+  perTransactionPaise: Number(process.env.AGENT_TXN_CAP_PAISE ?? 500_000),      // ₹5,000
+  perSessionPaise:     Number(process.env.AGENT_SESSION_CAP_PAISE ?? 2_500_000), // ₹25,000
   usdRate:             Number(process.env.INR_PER_USD ?? 83.5),
 }
 

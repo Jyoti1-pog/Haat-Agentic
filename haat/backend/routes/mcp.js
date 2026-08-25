@@ -202,7 +202,83 @@ function notAllowed(_req, res) {
     id: null,
   })
 }
-router.get(['/', '/s/:token'], notAllowed)
+
+/**
+ * A GET here is almost always a person, not a client.
+ *
+ * Pasting the URL into the address bar is the obvious way to check whether a
+ * server is up, and answering that with a JSON-RPC error tells someone who is
+ * not an MCP client that they have broken something, when in fact they have
+ * confirmed it works. So a browser gets a page that says what this is and what
+ * to do with it. Anything not asking for HTML still gets the JSON-RPC 405,
+ * because that is what a real client is equipped to read.
+ */
+router.get(['/', '/s/:token'], (req, res) => {
+  if (!String(req.headers.accept ?? '').includes('text/html')) return notAllowed(req, res)
+
+  cors(res)
+  const { session } = identity(req)
+  const origin = selfOrigin(req)
+  const token = String(req.params.token ?? '').trim()
+  const url = token ? `${origin}/mcp/s/${token}` : `${origin}/mcp`
+  const shared = !token
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+
+  res.status(200).type('html').send(`<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>haat · MCP endpoint</title>
+<style>
+  :root { color-scheme: dark }
+  * { box-sizing: border-box }
+  body { margin:0; background:#0F0D0A; color:#EDE6D8; font:400 16px/1.65 ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif; padding:6vh 5vw }
+  main { max-width: 60ch; margin: 0 auto }
+  h1 { font-size: clamp(30px,6vw,44px); font-weight:400; letter-spacing:-.02em; margin:0 0 6px }
+  .ok { display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#8FA97E; margin-bottom:22px }
+  .ok::before { content:''; width:7px; height:7px; border-radius:50%; background:#8FA97E }
+  p { color:#A79E8E; margin:0 0 16px }
+  code, .url { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13.5px }
+  .url { display:block; padding:14px 16px; border:1px solid #2A251E; background:#151109; color:#B8935A; word-break:break-all; margin:0 0 8px }
+  h2 { font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#EDE6D8; font-weight:400; margin:34px 0 12px }
+  ol { color:#A79E8E; padding-left:20px; margin:0 0 16px } li { margin-bottom:8px }
+  .warn { border-left:2px solid #B8935A; padding:2px 0 2px 16px; margin:0 0 16px }
+  a { color:#B8935A }
+  hr { border:0; border-top:1px solid #2A251E; margin:34px 0 18px }
+  .foot { font-size:13px; color:#6E675C }
+</style></head><body><main>
+  <h1>haat</h1>
+  <div class="ok">MCP endpoint live</div>
+
+  <p>This URL is for an AI client to connect to, not for a browser to open — you are
+  seeing this page because you opened it in one. It working is what you just confirmed.</p>
+
+  <h2>Your connector URL</h2>
+  <div class="url">${esc(url)}</div>
+  ${shared
+    ? `<p class="warn">This is the <strong>shared</strong> endpoint — every agent using it draws on
+       one spend budget. For a budget of your own, put any word you like on the end:
+       <code>${esc(origin)}/mcp/s/my-agent</code></p>`
+    : `<p class="warn">Session <code>${esc(session)}</code> — this token gives you a spend budget
+       that is yours alone. Keep using the same one and your budget and history persist.</p>`}
+
+  <h2>Connecting Claude</h2>
+  <ol>
+    <li>Open <strong>Settings → Connectors</strong> — in the Claude app or on claude.ai.</li>
+    <li>Choose <strong>Add custom connector</strong>.</li>
+    <li>Paste the URL above. Nothing to install, no key, no account.</li>
+  </ol>
+  <p>Pasting the URL into a chat message will not work — Claude cannot add a connector
+  to itself from a conversation. It has to be added in Settings.</p>
+
+  <hr>
+  <p class="foot">9 tools · search, order, pay, deliver · every purchase bounded by spend
+  caps and written to an audit trail.<br>
+  <a href="${esc(origin)}/docs">Full documentation</a> ·
+  <a href="${esc(origin)}/catalogue">Browse as a person</a></p>
+</main></body></html>`)
+})
+
 router.delete(['/', '/s/:token'], notAllowed)
 
 export default router
