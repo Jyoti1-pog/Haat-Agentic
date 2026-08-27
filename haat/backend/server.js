@@ -13,7 +13,7 @@ import chatRouter   from './routes/chat.js'
 import authRouter   from './routes/auth.js'
 import agentCommerceRouter, { digitalRouter, shopRouter } from './routes/agentCommerce.js'
 import sellerProductsRouter from './routes/sellerProducts.js'
-import mcpRouter from './routes/mcp.js'
+import mcpRouter, { wellKnownRouter } from './routes/mcp.js'
 import * as store from './services/agentStore.js'
 import * as storage from './services/storage.js'
 import * as llm from './services/llm.js'
@@ -137,6 +137,11 @@ app.use('/api/seller',         sellerProductsRouter) // seller product listing
 // write lock for the length of a search. Tool calls re-enter through /api and
 // take the lock there, for the operations that genuinely write.
 app.use('/mcp', mcpRouter)
+
+// Answered by us, never by the SPA. A client asks here whether haat has a
+// sign-in service; the single-page app would reply 200 with its own HTML, and
+// the client would take that as a yes.
+app.use('/.well-known', wellKnownRouter)
 
 // ── Health ─────────────────────────────────────────────────────────────────
 app.get('/api/health', async (_req, res) => {

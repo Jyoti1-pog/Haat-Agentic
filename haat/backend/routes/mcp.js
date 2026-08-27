@@ -282,3 +282,39 @@ router.get(['/', '/s/:token'], (req, res) => {
 router.delete(['/', '/s/:token'], notAllowed)
 
 export default router
+
+// ── OAuth discovery ──────────────────────────────────────────────────────────
+/**
+ * 404, deliberately.
+ *
+ * Before connecting, an MCP client asks whether the server has a sign-in
+ * service — RFC 9728 protected-resource metadata, then RFC 8414 authorization
+ * server metadata. haat needs no authorisation, so the correct answer to both
+ * is "there is nothing here", and a client that hears it connects anonymously.
+ *
+ * What it must never hear is 200. A single-page app answers every unknown path
+ * with its own index.html, which made these probes return 200 and a page of
+ * HTML — so the client concluded a sign-in service existed, tried to register
+ * with it, got markup where it expected JSON, and refused to connect. The
+ * connector failed with an OAuth registration error on a server that has no
+ * OAuth at all.
+ *
+ * This has to be mounted ahead of any catch-all, and routed to the function
+ * rather than the static build, or the catch-all answers first and the bug
+ * comes back looking exactly the same.
+ */
+export const wellKnownRouter = express.Router()
+
+wellKnownRouter.use((req, res) => {
+  cors(res)
+  const oauth = /^\/oauth-|^\/openid-/.test(req.path)
+  res.status(404).json({
+    error: 'not_found',
+    resource: `/.well-known${req.path}`,
+    ...(oauth && {
+      detail:
+        'haat has no authorisation server. Connect without credentials — every tool is ' +
+        'reachable anonymously, and spend limits are enforced per session rather than per user.',
+    }),
+  })
+})
